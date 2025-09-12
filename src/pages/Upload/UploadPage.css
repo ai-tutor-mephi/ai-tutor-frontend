@@ -1,0 +1,158 @@
+.upload-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 50px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+  
+  .upload-blocks {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  
+  .upload-block {
+    background-color: #f7f7f7;
+    padding: 25px 20px;
+    width: 280px;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .upload-block:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  }
+  
+  .block-title {
+    display: block;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #444;
+  }
+  
+  /* Кастомный input для файла */
+  .file-input-label {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.2s;
+  }
+  
+  .file-input-label:hover {
+    background-color: #d0d0d0;
+  }
+  
+  .file-input {
+    display: none;
+  }
+  
+  /* Поле для ссылки */
+
+  .link-input {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .link-input-wrapper {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .link-input-wrapper input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  .link-input-wrapper button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background-color: #888;
+    color: white;
+    cursor: not-allowed;
+    transition: background-color 0.3s;
+  }
+  
+  .link-input-wrapper button:disabled {
+    opacity: 0.5;
+  }
+  
+  .link-input-wrapper button:not(:disabled) {
+    cursor: pointer;
+    background-color: #764ba2;
+  }
+
+  .upload-block button {
+    width: 100%;
+    padding: 10px 0;
+    border-radius: 6px;
+    border: none;
+    background-color: #888;
+    color: white;
+    cursor: not-allowed;
+    transition: background-color 0.3s;
+  }
+  
+  .upload-block button.active {
+    background-color: #764ba2;
+    cursor: pointer;
+  }
+  
+  /* Сообщение и кнопка отправки */
+  .message-input-wrapper {
+    display: flex;
+    gap: 10px;
+    width: 500px;
+    max-width: 90%;
+  }
+  
+  .message-input-wrapper input {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  .message-input-wrapper button {
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    background-color: #888;
+    color: white;
+    cursor: not-allowed;
+    transition: background-color 0.3s;
+  }
+  
+  .message-input-wrapper button.active {
+    background-color: #3498db;
+    cursor: pointer;
+  }
+  
+  .status-message {
+    margin-top: 25px;
+    font-size: 15px;
+    color: #555;
+    text-align: center;
+  }
+  
