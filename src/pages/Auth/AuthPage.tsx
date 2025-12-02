@@ -9,6 +9,7 @@ type Props = {
 
 export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
   const [mode, setMode] = useState<"login" | "register">("login");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -19,10 +20,10 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
     setErr(null);
     try {
       if (mode === "login") {
-        await api.login(email, password);
+        await api.login(userName, password);
       } else {
-        await api.register(email, password);
-        await api.login(email, password);
+        await api.register(userName, email, password);
+        await api.login(userName, password);
       }
       await onAuthSuccess();
       navigate("/upload");
@@ -39,14 +40,27 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
         </h2>
         <form className="auth-form" onSubmit={submit}>
           <div className="form-group">
-            <label>Email</label>
+            <label>Имя пользователя</label>
             <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              type="text"
               required
+              minLength={3}
+              maxLength={50}
             />
           </div>
+          {mode === "register" && (
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                required
+              />
+            </div>
+          )}
           <div className="form-group">
             <label>Пароль</label>
             <input
@@ -54,6 +68,8 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               required
+              minLength={8}
+              maxLength={100}
             />
           </div>
           <button className="auth-button" type="submit">
@@ -68,7 +84,11 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
               <button
                 className="link-button"
                 type="button"
-                onClick={() => setMode("register")}
+                onClick={() => {
+                  setMode("register");
+                  setErr(null);
+                  setPassword("");
+                }}
               >
                 Регистрация
               </button>
@@ -79,7 +99,12 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
               <button
                 className="link-button"
                 type="button"
-                onClick={() => setMode("login")}
+                onClick={() => {
+                  setMode("login");
+                  setErr(null);
+                  setEmail("");
+                  setPassword("");
+                }}
               >
                 Авторизация
               </button>
