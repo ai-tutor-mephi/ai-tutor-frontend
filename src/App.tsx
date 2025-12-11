@@ -5,7 +5,6 @@ import NotFound from './pages/NotFound/NotFound';
 import Home from './pages/Home/Home';
 import About from './pages/About/About';
 import { AuthPage } from './pages/Auth/AuthPage';
-import { User } from "./types/user";
 import * as api from "./services/api";
 import { PrivateRoute } from './components/PrivateRoute';
 import Upload from "./pages/Upload/Upload";
@@ -15,22 +14,17 @@ import './App.css';
 
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetchMe = async () => {
-    try {
-      const u = await api.me();
-      setUser(u);
-    } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
+  const checkAuth = () => {
+    const authenticated = api.isAuthenticated();
+    setIsAuthenticated(authenticated);
+    setLoading(false);
   };
 
   useEffect(() => {
-    fetchMe();
+    checkAuth();
   }, []);
 
   if (loading) return <LoadingPage />;
@@ -39,17 +33,13 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home user={user} />} />
+          <Route index element={<Home isAuthenticated={isAuthenticated} />} />
           <Route path="/about" element={<About />} />
-          <Route path="/auth" element={<AuthPage onAuthSuccess={fetchMe} />} />
-          {/* защищённый маршрут */}
+          <Route path="/auth" element={<AuthPage onAuthSuccess={checkAuth} />} />
+          {/* защищённый маршрут - ВРЕМЕННО открыт для тестирования */}
           <Route 
             path="/upload" 
-            element={
-              <PrivateRoute user={user}>
-                <Upload onLogout={() => setUser(null)} />
-              </PrivateRoute>
-            } 
+            element={<Upload onLogout={() => setIsAuthenticated(false)} />}
           />
           <Route path="*" element={<NotFound />} />
         </Route>

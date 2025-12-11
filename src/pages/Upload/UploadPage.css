@@ -1,158 +1,621 @@
 .upload-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 50px 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-  }
-  
-  .upload-blocks {
-    display: flex;
-    gap: 25px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 40px;
-  }
-  
-  .upload-block {
-    background-color: #f7f7f7;
-    padding: 25px 20px;
-    width: 280px;
-    text-align: center;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .upload-block:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-  }
-  
-  .block-title {
-    display: block;
-    font-weight: 600;
-    font-size: 18px;
-    margin-bottom: 15px;
-    color: #444;
-  }
-  
-  /* Кастомный input для файла */
-  .file-input-label {
-    display: inline-block;
-    padding: 10px 15px;
-    background-color: #e0e0e0;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    text-align: center;
-    transition: background-color 0.2s;
-  }
-  
-  .file-input-label:hover {
-    background-color: #d0d0d0;
-  }
-  
-  .file-input {
-    display: none;
-  }
-  
-  /* Поле для ссылки */
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  padding: 20px;
+}
 
-  .link-input {
-    width: 100%;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
+.upload-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #764ba2;
+}
 
-  .link-input-wrapper {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .link-input-wrapper input {
-    flex: 1;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-  }
-  
-  .link-input-wrapper button {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background-color: #888;
-    color: white;
-    cursor: not-allowed;
-    transition: background-color 0.3s;
-  }
-  
-  .link-input-wrapper button:disabled {
-    opacity: 0.5;
-  }
-  
-  .link-input-wrapper button:not(:disabled) {
-    cursor: pointer;
-    background-color: #764ba2;
-  }
+.upload-header h2 {
+  margin: 0;
+  color: #764ba2;
+}
 
-  .upload-block button {
-    width: 100%;
-    padding: 10px 0;
-    border-radius: 6px;
-    border: none;
-    background-color: #888;
-    color: white;
-    cursor: not-allowed;
-    transition: background-color 0.3s;
+.logout-button {
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: none;
+  background-color: #e74c3c;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
+}
+
+.error-message {
+  background-color: #fee;
+  color: #c00;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border: 1px solid #fcc;
+}
+
+.upload-layout {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Боковая панель с диалогами */
+.dialogs-sidebar {
+  width: 280px;
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  padding: 15px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  margin-bottom: 15px;
+}
+
+.sidebar-header h3 {
+  margin: 0 0 10px 0;
+  color: #764ba2;
+  font-size: 18px;
+}
+
+.new-dialog-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(118, 75, 162, 0.3);
+}
+
+.new-dialog-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(118, 75, 162, 0.4);
+}
+
+.dialogs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dialog-item {
+  background-color: white;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.dialog-item:hover {
+  background-color: #f0f0f0;
+  transform: translateX(5px);
+}
+
+.dialog-item.active {
+  border-color: #764ba2;
+  background-color: #f8f4fc;
+}
+
+.dialog-title {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 14px;
+}
+
+.dialog-date {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Область чата */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.user-message {
+  background-color: #e3f2fd;
+  margin-left: auto;
+  text-align: right;
+  border: 1px solid #90caf9;
+}
+
+.bot-message {
+  background-color: #f3e5f5;
+  margin-right: auto;
+  border: 1px solid #ce93d8;
+}
+
+.message strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.message-input-wrapper {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.message-input-wrapper input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.message-input-wrapper input:focus {
+  outline: none;
+  border-color: #764ba2;
+}
+
+.message-input-wrapper button {
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  background-color: #888;
+  color: white;
+  cursor: not-allowed;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+
+.message-input-wrapper button.active {
+  background-color: #764ba2;
+  cursor: pointer;
+}
+
+.message-input-wrapper button.active:hover {
+  background-color: #5e3a82;
+}
+
+.upload-files-section {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 14px;
+}
+
+.file-input-label:hover {
+  background-color: #d0d0d0;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+
+.upload-btn:hover {
+  background-color: #2980b9;
+}
+
+.upload-btn:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+/* Когда диалог не выбран */
+.no-dialog-selected {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  color: #888;
+}
+
+.no-dialog-selected h3 {
+  margin-bottom: 15px;
+  color: #555;
+  font-size: 22px;
+}
+
+.no-dialog-selected p {
+  color: #999;
+  font-size: 16px;
+}
+
+.create-dialog-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.create-dialog-btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  background-color: #764ba2;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+
+.create-dialog-btn:hover {
+  background-color: #5e3a82;
+}
+
+.create-dialog-btn:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+/* ============ МОДАЛЬНОЕ ОКНО ============ */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .upload-block button.active {
-    background-color: #764ba2;
-    cursor: pointer;
+  to {
+    opacity: 1;
   }
-  
-  /* Сообщение и кнопка отправки */
-  .message-input-wrapper {
-    display: flex;
-    gap: 10px;
-    width: 500px;
-    max-width: 90%;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
   }
-  
-  .message-input-wrapper input {
-    flex: 1;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
-  
-  .message-input-wrapper button {
-    padding: 10px 18px;
-    border-radius: 6px;
-    border: none;
-    background-color: #888;
-    color: white;
-    cursor: not-allowed;
-    transition: background-color 0.3s;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 2px solid #f0f0f0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.modal-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+.modal-description {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-warning {
+  margin: 0 0 20px 0;
+  padding: 10px 15px;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  color: #856404;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.modal-warning strong {
+  font-weight: 700;
+}
+
+.file-input-label-modal {
+  display: block;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s;
+  border: 2px dashed #764ba2;
+  font-size: 16px;
+  font-weight: 600;
+  color: #764ba2;
+}
+
+.file-input-label-modal:hover {
+  background: linear-gradient(135deg, #e0e7ff 0%, #b8c5e0 100%);
+  transform: scale(1.02);
+}
+
+.selected-files-list {
+  margin-top: 15px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.file-item {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-footer {
+  padding: 20px 25px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: #fafafa;
+}
+
+.modal-cancel-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  background-color: white;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.modal-cancel-btn:hover {
+  background-color: #f5f5f5;
+  border-color: #bbb;
+}
+
+.modal-cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-create-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+}
+
+.modal-create-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(118, 75, 162, 0.4);
+}
+
+.modal-create-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Дополнительные стили для модальных окон */
+.modal-input-text {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.modal-input-text:focus {
+  outline: none;
+  border-color: #764ba2;
+}
+
+.modal-input-text:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.modal-submit-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+}
+
+.modal-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(118, 75, 162, 0.4);
+}
+
+.modal-submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ============ КОНТЕКСТНОЕ МЕНЮ ============ */
+
+.context-menu {
+  position: fixed;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  min-width: 180px;
+  padding: 6px 0;
+  animation: contextMenuAppear 0.15s ease-out;
+}
+
+@keyframes contextMenuAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
-  
-  .message-input-wrapper button.active {
-    background-color: #3498db;
-    cursor: pointer;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  .status-message {
-    margin-top: 25px;
-    font-size: 15px;
-    color: #555;
-    text-align: center;
-  }
+}
+
+.context-menu-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.context-menu-item:hover {
+  background-color: #f5f5f5;
+}
+
+.context-menu-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.context-menu-item:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.context-menu-item.delete {
+  color: #e74c3c;
+}
+
+.context-menu-item.delete:hover {
+  background-color: #ffe5e5;
+}
   

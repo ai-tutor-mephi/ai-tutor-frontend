@@ -1,17 +1,16 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { User } from "../../types/user";
 import "./Home.css"; // Подключаем стили
 
 type Props = {
-  user: User | null;
+  isAuthenticated: boolean;
 };
 
-const Home: React.FC<Props> = ({ user }) => {
+const Home: React.FC<Props> = ({ isAuthenticated }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (user) {
+    if (isAuthenticated) {
       navigate("/upload");
     } else {
       navigate("/auth");
