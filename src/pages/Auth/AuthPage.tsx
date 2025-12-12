@@ -12,12 +12,19 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
+
+    if (mode === "register" && password !== confirmPassword) {
+      setErr("Пароли не совпадают");
+      return;
+    }
+
     try {
       if (mode === "login") {
         await api.login(userName, password);
@@ -72,6 +79,19 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
               maxLength={100}
             />
           </div>
+          {mode === "register" && (
+            <div className="form-group">
+              <label>Подтвердите пароль</label>
+              <input
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                type="password"
+                required
+                minLength={8}
+                maxLength={100}
+              />
+            </div>
+          )}
           <button className="auth-button" type="submit">
             {mode === "login" ? "Войти" : "Зарегистрироваться"}
           </button>
@@ -88,6 +108,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
                   setMode("register");
                   setErr(null);
                   setPassword("");
+                  setConfirmPassword("");
                 }}
               >
                 Зарегистрироваться
@@ -104,6 +125,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
                   setErr(null);
                   setEmail("");
                   setPassword("");
+                  setConfirmPassword("");
                 }}
               >
                 Войти

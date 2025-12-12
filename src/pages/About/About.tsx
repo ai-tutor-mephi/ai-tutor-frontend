@@ -38,6 +38,15 @@ const About = () => {
         </div>
 
         <div className="feature-card">
+          <div className="feature-icon">🧭</div>
+          <h3 className="feature-title">Ориентир в материалах</h3>
+          <p className="feature-description">
+            Наводящие вопросы по разделам и ключевым понятиям помогают быстро
+            найти нужное место в документах.
+          </p>
+        </div>
+
+        <div className="feature-card">
           <div className="feature-icon">🔒</div>
           <h3 className="feature-title">Ваши данные под защитой</h3>
           <p className="feature-description">

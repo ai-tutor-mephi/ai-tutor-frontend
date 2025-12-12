@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import * as api from "../../services/api";
 import "./Layout.css";
@@ -14,6 +14,7 @@ const Layout: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (api.isAuthenticated()) {
@@ -47,6 +48,17 @@ const Layout: React.FC = () => {
   const handleChangeEmailClick = () => {
     setShowProfileMenu(false);
     alert("Смена email пока недоступна");
+  };
+
+  const handleLogoutClick = async () => {
+    setShowProfileMenu(false);
+    try {
+      await api.logout();
+    } catch {
+      api.clearTokens();
+    }
+    setUserName(null);
+    navigate("/auth");
   };
 
   const handleSubmitNameChange = async () => {
@@ -114,6 +126,9 @@ const Layout: React.FC = () => {
                     <div className="dropdown-item" onClick={handleChangeEmailClick}>
                       Сменить email
                     </div>
+                    <div className="dropdown-item" onClick={handleLogoutClick}>
+                      Выйти
+                    </div>
                   </div>
                 )}
               </li>
@@ -136,6 +151,7 @@ const Layout: React.FC = () => {
             Загрузите документы и начните диалог — тьютор отвечает мгновенно.
           </p>
           <p>© 2025 Mephi Tutor. Все права защищены.</p>
+          <p>Есть вопросы? Пишите нам в telegram: @WocherZ</p>
         </div>
       </footer>
 
@@ -192,5 +208,3 @@ const Layout: React.FC = () => {
 };
 
 export default Layout;
-
-
