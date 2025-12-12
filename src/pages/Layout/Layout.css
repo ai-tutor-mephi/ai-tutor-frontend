@@ -1,4 +1,4 @@
-.app {
+﻿.app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -334,6 +334,8 @@ footer {
   border: 2px solid #ddd;
   border-radius: 8px;
   font-size: 15px;
+  color: #222;
+  background-color: white;
   transition: border-color 0.3s;
   box-sizing: border-box;
 }

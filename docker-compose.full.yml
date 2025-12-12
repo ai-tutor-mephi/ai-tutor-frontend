@@ -1,0 +1,39 @@
+version: '3.8'
+
+# Полная конфигурация с frontend и backend вместе
+# Используйте этот файл если backend тоже в Docker
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-tutor-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - ai-tutor-network
+    restart: unless-stopped
+
+  backend:
+    # Замените на путь к вашему backend
+    # build: ../ai-tutor-backend
+    image: ai-tutor-backend:latest
+    container_name: ai-tutor-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      # Добавьте другие переменные окружения для backend
+    networks:
+      - ai-tutor-network
+    restart: unless-stopped
+
+networks:
+  ai-tutor-network:
+    driver: bridge
+

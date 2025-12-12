@@ -403,9 +403,13 @@ export async function changeUsername(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userName }),
   });
-  const data = await handleResponse<ChangeUsernameResponse>(resp);
-  
-  // РћР±РЅРѕРІР»СЏРµРј С‚РѕРєРµРЅС‹, С‚Р°Рє РєР°Рє РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР·РјРµРЅРёР»РѕСЃСЊ
-  // Р‘СЌРєРµРЅРґ РґРѕР»Р¶РµРЅ РІРµСЂРЅСѓС‚СЊ РЅРѕРІС‹Рµ С‚РѕРєРµРЅС‹ РёР»Рё РјС‹ РґРѕР»Р¶РЅС‹ РёС… РѕР±РЅРѕРІРёС‚СЊ
-  return data;
+  return handleResponse<ChangeUsernameResponse>(resp);
 }
+
+
+// Принудительно обновляем токены (нужно, чтобы новый username попал в JWT)
+export async function refreshTokens(): Promise<void> {
+  await refreshAccessToken();
+}
+
+

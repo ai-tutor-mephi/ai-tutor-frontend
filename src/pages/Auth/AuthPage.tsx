@@ -28,7 +28,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
       await onAuthSuccess();
       navigate("/upload");
     } catch (e: any) {
-      setErr(e.message || "Ошибка");
+      setErr(e.message || "Не удалось выполнить запрос");
     }
   };
 
@@ -36,7 +36,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
     <div className="auth-container">
       <div className="auth-card">
         <h2 className="auth-title">
-          {mode === "login" ? "Авторизация" : "Регистрация"}
+          {mode === "login" ? "Вход" : "Регистрация"}
         </h2>
         <form className="auth-form" onSubmit={submit}>
           <div className="form-group">
@@ -90,7 +90,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
                   setPassword("");
                 }}
               >
-                Регистрация
+                Зарегистрироваться
               </button>
             </>
           ) : (
@@ -106,7 +106,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
                   setPassword("");
                 }}
               >
-                Авторизация
+                Войти
               </button>
             </>
           )}

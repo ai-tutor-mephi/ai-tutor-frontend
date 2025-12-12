@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: ai-tutor-frontend-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Монтируем исходный код для hot reload
+      - ./src:/app/src
+      - ./public:/app/public
+      # Исключаем node_modules из монтирования
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_URL=http://host.docker.internal:8080
+    extra_hosts:
+      # Для доступа к backend на localhost хоста
+      - "host.docker.internal:host-gateway"
+    networks:
+      - ai-tutor-network
+    stdin_open: true
+    tty: true
+
+networks:
+  ai-tutor-network:
+    driver: bridge
+

@@ -10,6 +10,9 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   const [dialogs, setDialogs] = useState<api.DialogInfo[]>([]);
   const [currentDialogId, setCurrentDialogId] = useState<number | null>(null);
   const [messages, setMessages] = useState<api.DialogMessagesDto[]>([]);
+  const [currentFiles, setCurrentFiles] = useState<api.FileResponse[]>([]);
+  const [fileCounts, setFileCounts] = useState<Record<number, number>>({});
+  const [showFiles, setShowFiles] = useState(true);
   const [inputText, setInputText] = useState<string>("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,44 +28,25 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   const [renameDialogId, setRenameDialogId] = useState<number | null>(null);
   const [newDialogTitle, setNewDialogTitle] = useState("");
 
-  // Закрытие контекстного меню при клике вне его
+  // Закрываем контекстное меню по клику вне его
   useEffect(() => {
-    const handleClick = () => setContextMenu({ visible: false, x: 0, y: 0, dialogId: null });
+    const handleClick = () =>
+      setContextMenu({ visible: false, x: 0, y: 0, dialogId: null });
     if (contextMenu.visible) {
       window.addEventListener("click", handleClick);
       return () => window.removeEventListener("click", handleClick);
     }
   }, [contextMenu.visible]);
 
-  // Загрузить список диалогов при монтировании
   useEffect(() => {
     loadDialogs();
-    // ВРЕМЕННЫЕ МОК-ДАННЫЕ для тестирования UI
-    if (dialogs.length === 0) {
-      setDialogs([
-        {
-          dialogId: 1,
-          title: "Математический анализ - лекция 5",
-          createdAt: new Date().toISOString(),
-        },
-        {
-          dialogId: 2,
-          title: "Физика - задачи по механике",
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-        },
-        {
-          dialogId: 3,
-          title: "История России - конспект",
-          createdAt: new Date(Date.now() - 172800000).toISOString(),
-        },
-      ]);
-    }
   }, []);
 
-  // Загрузить сообщения при выборе диалога
   useEffect(() => {
     if (currentDialogId !== null) {
       loadMessages(currentDialogId);
+      loadDialogFiles(currentDialogId);
+      setShowFiles(true);
     }
   }, [currentDialogId]);
 
@@ -71,7 +55,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       const data = await api.getDialogs();
       setDialogs(data);
     } catch (err: any) {
-      setError(err.message || "Ошибка загрузки диалогов");
+      setError(err.message || "Не удалось загрузить список диалогов");
     }
   };
 
@@ -80,7 +64,18 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       const data = await api.getDialogMessages(dialogId);
       setMessages(data.dialogMessages);
     } catch (err: any) {
-      setError(err.message || "Ошибка загрузки сообщений");
+      setError(err.message || "Не удалось загрузить сообщения диалога");
+    }
+  };
+
+  const loadDialogFiles = async (dialogId: number) => {
+    try {
+      const files = await api.getDialogFiles(dialogId);
+      setCurrentFiles(files);
+      setFileCounts((prev) => ({ ...prev, [dialogId]: files.length }));
+    } catch (err: any) {
+      setError(err.message || "Не удалось загрузить файлы диалога");
+      setCurrentFiles([]);
     }
   };
 
@@ -88,20 +83,23 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     const files = e.target.files;
     if (files) {
       const fileArray = Array.from(files);
-      const allowedExtensions = ['.txt', '.docx', '.pdf'];
-      
-      // Проверяем, что все файлы имеют разрешенные расширения
-      const invalidFiles = fileArray.filter(file => {
-        const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+      const allowedExtensions = [".txt", ".docx", ".pdf"];
+
+      const invalidFiles = fileArray.filter((file) => {
+        const extension = "." + file.name.split(".").pop()?.toLowerCase();
         return !allowedExtensions.includes(extension);
       });
-      
+
       if (invalidFiles.length > 0) {
-        setError(`Можно загружать только файлы форматов: TXT, DOCX, PDF. Неподдерживаемые файлы: ${invalidFiles.map(f => f.name).join(', ')}`);
-        e.target.value = ''; // Очищаем input
+        setError(
+          `Можно загружать только TXT, DOCX, PDF. Проверьте файлы: ${invalidFiles
+            .map((f) => f.name)
+            .join(", ")}`
+        );
+        e.target.value = "";
         return;
       }
-      
+
       setSelectedFiles(fileArray);
       setError(null);
     }
@@ -109,7 +107,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
 
   const handleCreateDialogWithFiles = async () => {
     if (selectedFiles.length === 0) {
-      setError("Выберите хотя бы один файл");
+      setError("Выберите файлы, чтобы создать диалог");
       return;
     }
 
@@ -120,10 +118,10 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       const dialog = await api.createDialogWithFiles(selectedFiles);
       setCurrentDialogId(dialog.dialogId);
       setSelectedFiles([]);
-      setShowCreateDialog(false); // Закрываем модальное окно
+      setShowCreateDialog(false);
       await loadDialogs();
     } catch (err: any) {
-      setError(err.message || "Ошибка создания диалога");
+      setError(err.message || "Не удалось создать диалог");
     } finally {
       setLoading(false);
     }
@@ -131,11 +129,11 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
 
   const handleUploadFilesToDialog = async () => {
     if (!currentDialogId) {
-      setError("Сначала выберите диалог");
+      setError("Выберите диалог, чтобы загрузить файлы");
       return;
     }
     if (selectedFiles.length === 0) {
-      setError("Выберите файлы для загрузки");
+      setError("Добавьте файлы для загрузки");
       return;
     }
 
@@ -145,9 +143,9 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     try {
       await api.uploadFilesToDialog(currentDialogId, selectedFiles);
       setSelectedFiles([]);
-      alert("Файлы успешно загружены в диалог");
+      alert("Файлы загружены в диалог");
     } catch (err: any) {
-      setError(err.message || "Ошибка загрузки файлов");
+      setError(err.message || "Не удалось загрузить файлы");
     } finally {
       setLoading(false);
     }
@@ -156,7 +154,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
     if (!currentDialogId) {
-      setError("Сначала создайте или выберите диалог");
+      setError("Выберите диалог, чтобы отправлять сообщения");
       return;
     }
 
@@ -165,24 +163,25 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
 
     try {
       const response = await api.sendMessage(currentDialogId, inputText);
-      
-      // Добавляем сообщение пользователя и ответ бота
       setMessages([
         ...messages,
         { message: inputText, role: "USER" },
         { message: response.answer, role: "BOT" },
       ]);
-      
       setInputText("");
     } catch (err: any) {
-      setError(err.message || "Ошибка отправки сообщения");
+      setError(err.message || "Не удалось отправить сообщение");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteDialog = async (dialogId: number) => {
-    if (!window.confirm("Вы уверены, что хотите удалить этот диалог?")) {
+    if (
+      !window.confirm(
+        "Удалить диалог? Файлы и переписка будут удалены безвозвратно."
+      )
+    ) {
       return;
     }
 
@@ -194,7 +193,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       }
       await loadDialogs();
     } catch (err: any) {
-      setError(err.message || "Ошибка удаления диалога");
+      setError(err.message || "Не удалось удалить диалог");
     }
   };
 
@@ -204,7 +203,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       onLogout();
       navigate("/auth");
     } catch (err: any) {
-      setError(err.message || "Ошибка выхода");
+      setError(err.message || "Не удалось выйти из аккаунта");
     }
   };
 
@@ -232,7 +231,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
 
   const handleSubmitRename = async () => {
     if (!renameDialogId || !newDialogTitle.trim()) {
-      setError("Название не может быть пустым");
+      setError("Введите новое название диалога");
       return;
     }
 
@@ -241,11 +240,10 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
 
     try {
       await api.changeDialogTitle(renameDialogId, newDialogTitle.trim());
-      // Обновляем список диалогов
       await loadDialogs();
       setShowRenameModal(false);
     } catch (err: any) {
-      setError(err.message || "Ошибка переименования диалога");
+      setError(err.message || "Не удалось переименовать диалог");
     } finally {
       setLoading(false);
     }
@@ -260,20 +258,14 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
 
   return (
     <div className="upload-page">
-      <div className="upload-header">
-        <h2>Диалоги</h2>
-        <button onClick={handleLogout} className="logout-button">
-          Выйти
-        </button>
-      </div>
+      <div className="upload-header"></div>
 
       {error && <div className="error-message">{error}</div>}
 
       <div className="upload-layout">
-        {/* Боковая панель со списком диалогов */}
         <div className="dialogs-sidebar">
           <div className="sidebar-header">
-            <h3>Мои диалоги</h3>
+            <h3>Ваши диалоги</h3>
             <button
               className="new-dialog-btn"
               onClick={() => setShowCreateDialog(true)}
@@ -292,15 +284,19 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 onContextMenu={(e) => handleContextMenu(e, dialog.dialogId)}
               >
                 <div className="dialog-title">{dialog.title}</div>
-                <div className="dialog-date">
-                  {new Date(dialog.createdAt).toLocaleDateString()}
+                <div className="dialog-meta">
+                  <span className="dialog-date">
+                    {new Date(dialog.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
             ))}
+            {dialogs.length === 0 && (
+              <div className="empty-state">Диалогов пока нет</div>
+            )}
           </div>
         </div>
 
-        {/* Основная область с сообщениями */}
         <div className="chat-area">
           {currentDialogId ? (
             <>
@@ -321,7 +317,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
               <div className="message-input-wrapper">
                 <input
                   type="text"
-                  placeholder="Введите сообщение..."
+                  placeholder="Напишите вопрос..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
@@ -340,8 +336,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
               <div className="upload-files-section">
                 <label className="file-input-label">
                   {selectedFiles.length > 0
-                    ? `Выбрано файлов: ${selectedFiles.length}`
-                    : "Выберите файлы"}
+                    ? `Файлов выбрано: ${selectedFiles.length}`
+                    : "Выбрать файлы"}
                   <input
                     type="file"
                     className="file-input"
@@ -361,40 +357,76 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                   </button>
                 )}
               </div>
+
+              <div className="dialog-files-panel">
+                <div className="dialog-files-header">
+                  <div className="dialog-files-title">
+                    <h4>Файлы диалога</h4>
+                    <span className="dialog-files-count">
+                      {currentFiles.length} шт.
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="dialog-files-toggle"
+                    onClick={() => setShowFiles((prev) => !prev)}
+                  >
+                    {showFiles ? "Свернуть" : "Развернуть"}
+                  </button>
+                </div>
+                {showFiles && (
+                  <>
+                    {currentFiles.length > 0 ? (
+                      <ul className="dialog-files-list">
+                        {currentFiles.map((file) => (
+                          <li key={file.fileId} className="dialog-file-item">
+                            {file.originalFileName}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="dialog-files-empty">Файлы не загружены</p>
+                    )}
+                  </>
+                )}
+              </div>
             </>
           ) : (
             <div className="no-dialog-selected">
-              <h3>Выберите диалог из списка или создайте новый</h3>
-              <p>Для создания нового диалога нажмите кнопку "+ Новый диалог"</p>
+              <h3>Выберите диалог</h3>
+              <p>
+                Создайте новый диалог с файлами, чтобы тьютор понимал контекст,
+                и начните задавать вопросы.
+              </p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Модальное окно для создания нового диалога */}
       {showCreateDialog && (
         <div className="modal-overlay" onClick={() => setShowCreateDialog(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Создать новый диалог</h3>
+              <h3>Создать диалог</h3>
               <button
                 className="modal-close-btn"
                 onClick={() => setShowCreateDialog(false)}
               >
-                ✕
+                ×
               </button>
             </div>
             <div className="modal-body">
               <p className="modal-description">
-                Выберите файлы для создания нового диалога с AI-тьютором
+                Загрузите файлы (TXT, DOCX, PDF), чтобы AITutor знал материалы,
+                с которыми вы работаете.
               </p>
               <p className="modal-warning">
-                ⚠️ Поддерживаются только форматы: <strong>TXT, DOCX, PDF</strong>
+                Можно прикреплять несколько файлов сразу.
               </p>
               <label className="file-input-label-modal">
                 {selectedFiles.length > 0
-                  ? `Выбрано файлов: ${selectedFiles.length}`
-                  : "📁 Выберите файлы"}
+                  ? `Файлов выбрано: ${selectedFiles.length}`
+                  : "Выбрать файлы"}
                 <input
                   type="file"
                   className="file-input"
@@ -408,7 +440,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 <div className="selected-files-list">
                   {selectedFiles.map((file, idx) => (
                     <div key={idx} className="file-item">
-                      📄 {file.name}
+                      • {file.name}
                     </div>
                   ))}
                 </div>
@@ -430,14 +462,13 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 onClick={handleCreateDialogWithFiles}
                 disabled={loading || selectedFiles.length === 0}
               >
-                {loading ? "Создание..." : "Создать"}
+                {loading ? "Создаём..." : "Создать"}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Контекстное меню для диалога */}
       {contextMenu.visible && (
         <div
           className="context-menu"
@@ -445,15 +476,14 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="context-menu-item" onClick={handleRenameDialog}>
-            ✏️ Переименовать
+            Переименовать
           </div>
           <div className="context-menu-item delete" onClick={handleDeleteFromContextMenu}>
-            🗑️ Удалить
+            Удалить
           </div>
         </div>
       )}
 
-      {/* Модальное окно переименования диалога */}
       {showRenameModal && (
         <div className="modal-overlay" onClick={() => setShowRenameModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -463,19 +493,19 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 className="modal-close-btn"
                 onClick={() => setShowRenameModal(false)}
               >
-                ✕
+                ×
               </button>
             </div>
             <div className="modal-body">
               <p className="modal-description">
-                Введите новое название диалога
+                Введите новое название диалога.
               </p>
               <input
                 type="text"
                 className="modal-input-text"
                 value={newDialogTitle}
                 onChange={(e) => setNewDialogTitle(e.target.value)}
-                placeholder="Название диалога"
+                placeholder="Новое название"
                 maxLength={255}
                 disabled={loading}
                 autoFocus
@@ -494,7 +524,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 onClick={handleSubmitRename}
                 disabled={loading || !newDialogTitle.trim()}
               >
-                {loading ? "Сохранение..." : "Сохранить"}
+                {loading ? "Сохраняем..." : "Сохранить"}
               </button>
             </div>
           </div>

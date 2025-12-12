@@ -1,44 +1,29 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
-import * as api from '../../services/api';
-import './Layout.css';
+import { Outlet, Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import * as api from "../../services/api";
+import "./Layout.css";
 
 const Layout: React.FC = () => {
-  const [userName, setUserName] = useState<string | null>(() => {
-    // Проверяем при первой загрузке
-    if (api.isAuthenticated()) {
-      return api.getUserNameFromToken();
-    }
-    return null;
-  });
-  
+  const [userName, setUserName] = useState<string | null>(() =>
+    api.isAuthenticated() ? api.getUserNameFromToken() : null
+  );
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showChangeNameModal, setShowChangeNameModal] = useState(false);
   const [newUserName, setNewUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const location = useLocation();
 
   useEffect(() => {
-    // Проверяем авторизацию при изменении маршрута
     if (api.isAuthenticated()) {
       const name = api.getUserNameFromToken();
       if (name !== userName) {
         setUserName(name);
       }
-    } else {
-      // ВРЕМЕННО: для тестирования UI без авторизации
-      if (location.pathname === '/upload' && !userName) {
-        setUserName('Тестовый пользователь');
-      } else if (location.pathname !== '/upload') {
-        // Сохраняем userName для других страниц, если он уже был установлен
-        // чтобы кнопка "Диалоги" оставалась видимой
-      }
     }
   }, [location.pathname, userName]);
 
-  // Закрытие меню при клике вне его
   useEffect(() => {
     const handleClick = () => setShowProfileMenu(false);
     if (showProfileMenu) {
@@ -61,12 +46,12 @@ const Layout: React.FC = () => {
 
   const handleChangeEmailClick = () => {
     setShowProfileMenu(false);
-    alert("Функция смены почты находится в разработке");
+    alert("Смена email пока недоступна");
   };
 
   const handleSubmitNameChange = async () => {
     if (!newUserName.trim() || newUserName.trim().length < 3) {
-      setError("Имя должно содержать минимум 3 символа");
+      setError("Имя должно быть длиной от 3 символов");
       return;
     }
 
@@ -75,19 +60,18 @@ const Layout: React.FC = () => {
 
     try {
       await api.changeUsername(newUserName.trim());
+      await api.refreshTokens();
       setUserName(newUserName.trim());
       setShowChangeNameModal(false);
-      window.location.reload(); // Перезагружаем для обновления токена
     } catch (err: any) {
-      setError(err.message || "Ошибка изменения имени");
+      setError(err.message || "Не удалось сменить имя");
     } finally {
       setLoading(false);
     }
   };
 
-  // Получить первую букву имени для аватара
   const getInitial = (name: string | null) => {
-    if (!name) return '?';
+    if (!name) return "?";
     return name.charAt(0).toUpperCase();
   };
 
@@ -105,7 +89,7 @@ const Layout: React.FC = () => {
               <Link to="/">Главная</Link>
             </li>
             <li>
-              <Link to="/about">О нас</Link>
+              <Link to="/about">О проекте</Link>
             </li>
             {userName && (
               <li>
@@ -118,15 +102,17 @@ const Layout: React.FC = () => {
                   <div className="avatar-circle">{getInitial(userName)}</div>
                   <span className="user-name">{userName}</span>
                 </div>
-                
-                {/* Выпадающее меню профиля */}
+
                 {showProfileMenu && (
-                  <div className="profile-dropdown" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="profile-dropdown"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <div className="dropdown-item" onClick={handleChangeNameClick}>
-                      ✏️ Сменить имя
+                      Сменить имя
                     </div>
                     <div className="dropdown-item" onClick={handleChangeEmailClick}>
-                      📧 Сменить почту
+                      Сменить email
                     </div>
                   </div>
                 )}
@@ -135,35 +121,39 @@ const Layout: React.FC = () => {
           </div>
         </ul>
       </nav>
-      
+
       <main className="content">
-        <Outlet /> {/* Здесь будут рендериться дочерние маршруты */}
+        <Outlet />
       </main>
-      
+
       <footer>
         <div className="footer-content">
-          <p>Проект разработан инициативной командой студентов НИЯУ МИФИ</p>
-          <p className="highlight">Не имеет коммерческой основы · Создано для образовательных целей</p>
+          <p>
+            AITutor помогает разбирать учебные и рабочие материалы, отвечая на
+            вопросы по загруженным файлам.
+          </p>
+          <p className="highlight">
+            Загрузите документы и начните диалог — тьютор отвечает мгновенно.
+          </p>
           <p>© 2025 Mephi Tutor. Все права защищены.</p>
         </div>
       </footer>
 
-      {/* Модальное окно смены имени */}
       {showChangeNameModal && (
         <div className="modal-overlay" onClick={() => setShowChangeNameModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Изменить имя пользователя</h3>
+              <h3>Сменить имя</h3>
               <button
                 className="modal-close-btn"
                 onClick={() => setShowChangeNameModal(false)}
               >
-                ✕
+                ×
               </button>
             </div>
             <div className="modal-body">
               <p className="modal-description">
-                Введите новое имя пользователя (минимум 3 символа)
+                Укажите новое имя пользователя (минимум 3 символа).
               </p>
               <input
                 type="text"
@@ -191,7 +181,7 @@ const Layout: React.FC = () => {
                 onClick={handleSubmitNameChange}
                 disabled={loading || !newUserName.trim() || newUserName.trim().length < 3}
               >
-                {loading ? "Сохранение..." : "Сохранить"}
+                {loading ? "Сохраняем..." : "Сохранить"}
               </button>
             </div>
           </div>
@@ -202,3 +192,5 @@ const Layout: React.FC = () => {
 };
 
 export default Layout;
+
+

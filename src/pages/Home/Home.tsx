@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./Home.css"; // Подключаем стили
+import "./Home.css";
 
 type Props = {
   isAuthenticated: boolean;
@@ -21,19 +21,23 @@ const Home: React.FC<Props> = ({ isAuthenticated }) => {
     <div className="home-container">
       <div className="home-card">
         <h2>
-          Искусственный интеллект <span className="highlight">в образовании</span> играет важную роль!
+          AITutor помогает быстро разобраться в ваших материалах{" "}
+          <span className="highlight">и отвечает на вопросы по ним</span>.
         </h2>
         <p>
-          Наш проект создан, чтобы <span className="highlight">упростить подготовку студентов к экзаменам</span>,
-          а преподавателям помочь <span className="highlight">в создании учебных материалов</span>.
+          Загружайте конспекты, статьи или отчёты — тьютор проанализирует их и
+          будет отвечать на вопросы с опорой на загруженный контекст.
         </p>
         <p>
-          Умный ИИ-тьютор сможет помочь вам <span className="highlight">решать задачи, объяснять сложные темы </span>
-          и подсказывать <span className="highlight">лучшие способы обучения</span>.
+          Общайтесь в формате чата: уточняйте, просите примеры, сравнивайте
+          версии. Все диалоги сохраняются, а файлы можно дополнять в любой
+          момент.
         </p>
-        <h1 className="cta-text">Попробуйте умного ИИ-тьютора уже сейчас!</h1>
+        <h1 className="cta-text">
+          Попробуйте и получите ответ за пару секунд!
+        </h1>
         <button className="try-button" onClick={handleClick}>
-          Попробовать
+          Начать
         </button>
       </div>
     </div>

@@ -1,39 +1,14 @@
 .upload-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px);
+  height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
-  padding: 20px;
+  padding: 10px 20px 20px;
 }
 
 .upload-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #764ba2;
-}
-
-.upload-header h2 {
-  margin: 0;
-  color: #764ba2;
-}
-
-.logout-button {
-  padding: 8px 20px;
-  border-radius: 6px;
-  border: none;
-  background-color: #e74c3c;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 14px;
-}
-
-.logout-button:hover {
-  background-color: #c0392b;
+  margin-bottom: 10px;
 }
 
 .error-message {
@@ -54,7 +29,7 @@
 
 /* Боковая панель с диалогами */
 .dialogs-sidebar {
-  width: 280px;
+  width: 240px;
   background-color: #f7f7f7;
   border-radius: 12px;
   padding: 15px;
@@ -131,9 +106,26 @@
   color: #888;
 }
 
+.dialog-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.dialog-files {
+  background: #ece8f8;
+  color: #5a3f87;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
 /* Область чата */
 .chat-area {
-  flex: 1;
+  flex: 1.2;
   display: flex;
   flex-direction: column;
   background-color: #fff;
@@ -158,6 +150,7 @@
   border-radius: 8px;
   max-width: 80%;
   word-wrap: break-word;
+  font-size: 14px;
 }
 
 .user-message {
@@ -176,7 +169,7 @@
 .message strong {
   display: block;
   margin-bottom: 5px;
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.8;
 }
 
@@ -191,7 +184,7 @@
   padding: 12px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 13px;
   transition: border-color 0.3s;
 }
 
@@ -226,6 +219,81 @@
   align-items: center;
   padding-top: 15px;
   border-top: 1px solid #eee;
+}
+
+.dialog-files-panel {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+}
+
+.dialog-files-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.dialog-files-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialog-files-title h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.dialog-files-count {
+  font-size: 12px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.dialog-files-toggle {
+  border: 1px solid #ddd;
+  background: #f7f7f7;
+  color: #555;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.dialog-files-toggle:hover {
+  background: #ececec;
+  border-color: #ccc;
+}
+
+.dialog-files-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dialog-file-item {
+  padding: 8px 10px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #333;
+  border: 1px solid #ececec;
+}
+
+.dialog-files-empty {
+  margin: 0;
+  font-size: 13px;
+  color: #777;
 }
 
 .file-input-label {
@@ -528,6 +596,8 @@
   font-size: 15px;
   transition: border-color 0.3s;
   box-sizing: border-box;
+  color: #222;
+  background-color: #fff;
 }
 
 .modal-input-text:focus {
