@@ -4,11 +4,11 @@ import "./About.css";
 const About = () => {
   return (
     <div className="about-container">
-      <h1 className="about-header">О проекте Mephi Tutor</h1>
+      <h1 className="about-header">О проекте AI Tutor</h1>
 
       <div className="about-content">
         <p className="about-text">
-          <span className="about-highlight">Mephi Tutor</span> — это помощник,
+          <span className="about-highlight">AI Tutor</span> — это помощник,
           который читает ваши материалы (конспекты, статьи, отчёты) и отвечает
           на вопросы, опираясь на загруженный контекст.
         </p>
@@ -66,7 +66,7 @@ const About = () => {
 
       <div className="about-content">
         <p className="about-text">
-          Попробуйте загрузить свои материалы и спросить AITutor о том, что
+          Попробуйте загрузить свои материалы и спросить AI Tutor о том, что
           важно именно вам. Мы продолжаем развиваться, чтобы быть полезнее
           каждый день.
         </p>
@@ -76,3 +76,4 @@ const About = () => {
 };
 
 export default About;
+

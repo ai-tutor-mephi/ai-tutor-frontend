@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import * as api from "../../services/api";
+import logo from "../../assets/AI_Tutor_LOGO.PNG";
 import "./Layout.css";
 
 const Layout: React.FC = () => {
@@ -93,7 +94,8 @@ const Layout: React.FC = () => {
         <ul>
           <li>
             <Link to="/" className="logo">
-              Mephi Tutor
+              <img src={logo} alt="AI Tutor logo" className="logo-icon" />
+              <span className="logo-text">AI Tutor</span>
             </Link>
           </li>
           <div className="nav-links">
@@ -144,13 +146,10 @@ const Layout: React.FC = () => {
       <footer>
         <div className="footer-content">
           <p>
-            AITutor помогает разбирать учебные и рабочие материалы, отвечая на
+            AI Tutor помогает разбирать учебные и рабочие материалы, отвечая на
             вопросы по загруженным файлам.
           </p>
-          <p className="highlight">
-            Загрузите документы и начните диалог — тьютор отвечает мгновенно.
-          </p>
-          <p>© 2025 Mephi Tutor. Все права защищены.</p>
+          <p>© 2025 AI Tutor. Все права защищены.</p>
           <p>Есть вопросы? Пишите нам в telegram: @WocherZ</p>
         </div>
       </footer>

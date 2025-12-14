@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
+import logo from "../../assets/AI_Tutor_LOGO.PNG";
 
 type Props = {
   isAuthenticated: boolean;
@@ -20,8 +21,12 @@ const Home: React.FC<Props> = ({ isAuthenticated }) => {
   return (
     <div className="home-container">
       <div className="home-card">
+        <div className="home-logo">
+          <img src={logo} alt="AI Tutor logo" />
+          <span>AI Tutor</span>
+        </div>
         <h2>
-          AITutor помогает быстро разобраться в ваших материалах{" "}
+          AI Tutor помогает быстро разобраться в ваших материалах{" "}
           <span className="highlight">и отвечает на вопросы по ним</span>.
         </h2>
         <p>

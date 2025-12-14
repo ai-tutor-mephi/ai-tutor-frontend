@@ -6,7 +6,7 @@
 
 /* Стили для шапки */
 .navigation {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  background: linear-gradient(90deg, #3872f8 0%, #2525eb 100%);
   padding: 1rem 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -21,6 +21,9 @@
 }
 
 .navigation .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 1.8rem;
   font-weight: bold;
   color: white;
@@ -30,6 +33,20 @@
 
 .navigation .logo:hover {
   opacity: 0.9;
+}
+
+.logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: white;
+  padding: 3px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.logo-text {
+  line-height: 1;
 }
 
 .nav-links {
@@ -72,7 +89,7 @@
 
 /* Стили для футера */
 footer {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  background: linear-gradient(90deg, #3872f8 0%, #2525eb 100%);
   color: white;
   text-align: center;
   padding: 2rem;
@@ -91,7 +108,7 @@ footer {
 
 .footer-content .highlight {
   font-weight: 600;
-  color: #F0ABFC;
+  color: #dbeafe;
 }
 
 /* Профиль пользователя */
@@ -120,7 +137,7 @@ footer {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #F0ABFC 0%, #E879F9 100%);
+  background: linear-gradient(90deg, #3872f8 0%, #2525eb 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,7 +304,7 @@ footer {
   align-items: center;
   padding: 20px 25px;
   border-bottom: 2px solid #f0f0f0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #3872f8 0%, #2525eb 100%);
   color: white;
 }
 
@@ -342,7 +359,7 @@ footer {
 
 .modal-input:focus {
   outline: none;
-  border-color: #764ba2;
+  border-color: #2563eb;
 }
 
 .modal-input:disabled {
@@ -395,13 +412,13 @@ footer {
   padding: 10px 24px;
   border-radius: 8px;
   border: none;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #3872f8 0%, #2525eb 100%);
   color: white;
   cursor: pointer;
   transition: all 0.3s;
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
 }
 
 .modal-submit-btn:hover:not(:disabled) {

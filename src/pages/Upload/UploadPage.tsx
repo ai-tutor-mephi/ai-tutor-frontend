@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as api from "../../services/api";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import "./UploadPage.css";
 
 type Props = { onLogout: () => void };
@@ -308,8 +311,38 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                       msg.role === "USER" ? "user-message" : "bot-message"
                     }`}
                   >
-                    <strong>{msg.role === "USER" ? "Вы" : "AITutor"}:</strong>{" "}
-                    {msg.message}
+                    <div className="message-header">
+                      {msg.role === "USER" ? "Вы" : "AI Tutor"}
+                    </div>
+                    <ReactMarkdown
+                      className="message-markdown"
+                      remarkPlugins={[remarkGfm, remarkBreaks]}
+                      linkTarget="_blank"
+                      skipHtml={false}
+                      components={{
+                        a: ({ node, ...props }) => (
+                          <a {...props} rel="noopener noreferrer" />
+                        ),
+                        code({ inline, className, children, ...props }) {
+                          const language =
+                            /language-(\w+)/.exec(className || "")?.[1] || "";
+                          if (inline) {
+                            return (
+                              <code className={`inline-code ${language}`} {...props}>
+                                {children}
+                              </code>
+                            );
+                          }
+                          return (
+                            <pre className={`code-block ${language}`}>
+                              <code {...props}>{children}</code>
+                            </pre>
+                          );
+                        },
+                      }}
+                    >
+                      {msg.message}
+                    </ReactMarkdown>
                   </div>
                 ))}
               </div>
@@ -417,7 +450,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
             </div>
             <div className="modal-body">
               <p className="modal-description">
-                Загрузите файлы (TXT, DOCX, PDF), чтобы AITutor знал материалы,
+                Загрузите файлы (TXT, DOCX, PDF), чтобы AI Tutor знал материалы,
                 с которыми вы работаете.
               </p>
               <p className="modal-warning">
