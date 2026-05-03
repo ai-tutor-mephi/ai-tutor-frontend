@@ -20,31 +20,81 @@ const Home: React.FC<Props> = ({ isAuthenticated }) => {
 
   return (
     <div className="home-container">
-      <div className="home-card">
+      <section className="home-hero">
         <div className="home-logo">
           <img src={logo} alt="AI Tutor logo" />
           <span>AI Tutor</span>
         </div>
-        <h2>
-          AI Tutor помогает быстро разобраться в ваших материалах{" "}
-          <span className="highlight">и отвечает на вопросы по ним</span>.
-        </h2>
-        <p>
-          Загружайте конспекты, статьи или отчёты — тьютор проанализирует их и
-          будет отвечать на вопросы с опорой на загруженный контекст.
-        </p>
-        <p>
-          Общайтесь в формате чата: уточняйте, просите примеры, сравнивайте
-          версии. Все диалоги сохраняются, а файлы можно дополнять в любой
-          момент.
-        </p>
-        <h1 className="cta-text">
-          Попробуйте и получите ответ за пару секунд!
+        <h1>
+          AI Tutor помогает быстро разобраться в ваших материалах.
         </h1>
-        <button className="try-button" onClick={handleClick}>
-          Начать
-        </button>
-      </div>
+        <p className="home-lead">
+          Загружайте конспекты, статьи или отчёты. Тьютор анализирует документы
+          и отвечает на вопросы с опорой на загруженный контекст.
+        </p>
+        <div className="home-actions">
+          <button className="try-button" onClick={handleClick}>
+            Начать работу
+          </button>
+          <button className="secondary-button" onClick={() => navigate("/about")}>
+            Как это работает
+          </button>
+        </div>
+      </section>
+
+      <section className="home-media-grid" aria-label="Возможности AI Tutor">
+        <div className="agent-console-card">
+          <div className="console-topline">
+            <span>DOCUMENT AGENT</span>
+            <span className="status-chip">Active</span>
+          </div>
+          <div className="console-prompt">
+            <p>Вопрос</p>
+            <strong>Сравни выводы из главы 2 и отчета за апрель.</strong>
+          </div>
+          <div className="console-answer">
+            <span>Ответ AI Tutor</span>
+            <p>
+              В обоих материалах главный риск связан с неполными исходными
+              данными. В отчете он описан через метрики, в главе 2 — через
+              методологию проверки.
+            </p>
+          </div>
+          <div className="console-files">
+            <span>lecture.pdf</span>
+            <span>report.docx</span>
+            <span>notes.txt</span>
+          </div>
+        </div>
+
+        <div className="hero-photo-card">
+          <div className="document-stack">
+            <div className="document-card primary">
+              <span>01</span>
+              <p>Загрузка материалов</p>
+            </div>
+            <div className="document-card">
+              <span>02</span>
+              <p>Диалог с контекстом</p>
+            </div>
+            <div className="document-card">
+              <span>03</span>
+              <p>Сохраненные ответы</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="trust-strip">
+        <p>Один рабочий поток для учебных материалов, статей и отчетов</p>
+        <div className="trust-items">
+          <span>TXT</span>
+          <span>DOCX</span>
+          <span>PDF</span>
+          <span>CHAT</span>
+          <span>HISTORY</span>
+        </div>
+      </section>
     </div>
   );
 };

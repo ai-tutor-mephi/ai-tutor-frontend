@@ -1,30 +1,34 @@
 .loading-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f8f8f8; /* светлый фон */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+.spinner {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+  border: 1px solid var(--color-hairline);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .spinner {
-    width: 60px;
-    height: 60px;
-    border: 6px solid #e0e0e0;
-    border-top-color: #3498db; /* цвет вращающейся полосы */
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 16px;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  .loading-container p {
-    font-size: 18px;
-    color: #333;
-  }
-  
+}
+
+.loading-container p {
+  margin: 0;
+  color: var(--color-body-muted);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+}

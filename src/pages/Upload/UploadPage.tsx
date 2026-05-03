@@ -261,7 +261,13 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
 
   return (
     <div className="upload-page">
-      <div className="upload-header"></div>
+      <div className="upload-header">
+        <p>DOCUMENT WORKSPACE</p>
+        <h1>Диалоги с материалами</h1>
+        <button type="button" className="logout-link" onClick={handleLogout}>
+          Выйти
+        </button>
+      </div>
 
       {error && <div className="error-message">{error}</div>}
 
@@ -291,6 +297,11 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                   <span className="dialog-date">
                     {new Date(dialog.createdAt).toLocaleDateString()}
                   </span>
+                  {typeof fileCounts[dialog.dialogId] === "number" && (
+                    <span className="dialog-files">
+                      {fileCounts[dialog.dialogId]} файлов
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
@@ -320,8 +331,10 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                       linkTarget="_blank"
                       skipHtml={false}
                       components={{
-                        a: ({ node, ...props }) => (
-                          <a {...props} rel="noopener noreferrer" />
+                        a: ({ node, children, ...props }) => (
+                          <a {...props} rel="noopener noreferrer">
+                            {children}
+                          </a>
                         ),
                         code({ inline, className, children, ...props }) {
                           const language =

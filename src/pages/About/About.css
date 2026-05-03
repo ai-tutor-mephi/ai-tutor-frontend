@@ -1,114 +1,157 @@
 .about-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-  }
-  
-  .about-header {
-    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 3px solid #8B5CF6;
-  }
-  
-  .about-content {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 25px rgba(139, 92, 246, 0.1);
-    margin-bottom: 2rem;
-  }
-  
-  .about-text {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #374151;
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
-  
-  .about-highlight {
-    color: #8B5CF6;
-    font-weight: 600;
-  }
-  
+  width: min(100%, var(--container-wide));
+  margin: 0 auto;
+  padding: 80px 32px;
+}
+
+.about-hero {
+  max-width: 980px;
+  margin-bottom: 64px;
+}
+
+.about-kicker {
+  margin: 0 0 18px;
+  color: var(--color-coral);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: 0.28px;
+}
+
+.about-header {
+  margin: 0;
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 72px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -1.44px;
+}
+
+.about-intro {
+  max-width: 700px;
+  margin: 28px 0 0;
+  color: var(--color-body-muted);
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.about-content {
+  max-width: 800px;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.about-text {
+  margin: 0;
+  color: var(--color-body-muted);
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.about-highlight {
+  color: var(--color-ink);
+}
+
+.about-features {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 80px;
+}
+
+.feature-card {
+  min-height: 260px;
+  padding: 24px;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+}
+
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: 32px;
+  margin-bottom: 54px;
+  border: 1px solid var(--color-coral-soft);
+  border-radius: var(--radius-xl);
+  color: var(--color-coral);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.28px;
+}
+
+.feature-title {
+  margin: 0 0 12px;
+  color: var(--color-ink);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.feature-description {
+  margin: 0;
+  color: var(--color-body-muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.about-team {
+  margin: 0 0 64px;
+  padding: 80px;
+  border-radius: var(--radius-lg);
+  background: var(--color-deep-green);
+  color: var(--color-canvas);
+}
+
+.about-team .about-kicker {
+  color: var(--color-coral-soft);
+}
+
+.team-title {
+  max-width: 850px;
+  margin: 0;
+  font-size: clamp(38px, 5vw, 60px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -1.2px;
+}
+
+.team-description {
+  max-width: 620px;
+  margin: 24px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+@media (max-width: 1024px) {
   .about-features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  
+}
+
+@media (max-width: 640px) {
+  .about-container {
+    padding: 56px 20px;
+  }
+
+  .about-features {
+    grid-template-columns: 1fr;
+    margin-bottom: 48px;
+  }
+
   .feature-card {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    padding: 1.5rem;
-    border-radius: 12px;
-    border-left: 4px solid #8B5CF6;
-    text-align: center;
+    min-height: auto;
   }
-  
+
   .feature-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #8B5CF6;
+    margin-bottom: 32px;
   }
-  
-  .feature-title {
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
-  }
-  
-  .feature-description {
-    color: #6b7280;
-    font-size: 0.95rem;
-  }
-  
+
   .about-team {
-    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-    color: white;
-    padding: 2rem;
-    border-radius: 15px;
-    margin: 2rem 0;
+    padding: 40px 24px;
   }
-  
-  .team-title {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-  }
-  
-  .team-description {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    opacity: 0.95;
-  }
-  
-  /* Адаптивность */
-  @media (max-width: 768px) {
-    .about-container {
-      padding: 1rem;
-    }
-    
-    .about-header {
-      font-size: 2.2rem;
-    }
-    
-    .about-content {
-      padding: 1.5rem;
-    }
-    
-    .about-features {
-      grid-template-columns: 1fr;
-    }
-    
-    .feature-card {
-      padding: 1.2rem;
-    }
-  }
+}

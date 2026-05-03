@@ -4,25 +4,18 @@ import "./About.css";
 const About = () => {
   return (
     <div className="about-container">
-      <h1 className="about-header">О проекте AI Tutor</h1>
-
-      <div className="about-content">
-        <p className="about-text">
-          <span className="about-highlight">AI Tutor</span> — это помощник,
-          который читает ваши материалы (конспекты, статьи, отчёты) и отвечает
-          на вопросы, опираясь на загруженный контекст.
+      <section className="about-hero">
+        <p className="about-kicker">AI TUTOR SYSTEM</p>
+        <h1 className="about-header">Рабочая среда для вопросов по документам</h1>
+        <p className="about-intro">
+          AI Tutor читает ваши материалы, сохраняет диалоги и помогает быстрее
+          находить смысл в конспектах, статьях и отчетах.
         </p>
-
-        <p className="about-text">
-          Мы делаем работу с документами проще: добавляйте файлы, задавайте
-          вопросы в чате и получайте ответы с примерами и пояснениями. Все
-          диалоги сохраняются, а файлы можно дополнять в любое время.
-        </p>
-      </div>
+      </section>
 
       <div className="about-features">
         <div className="feature-card">
-          <div className="feature-icon">📂</div>
+          <div className="feature-icon">01</div>
           <h3 className="feature-title">Контекст из файлов</h3>
           <p className="feature-description">
             Поддерживаем TXT, DOCX, PDF и отвечаем с учётом ваших материалов.
@@ -30,7 +23,7 @@ const About = () => {
         </div>
 
         <div className="feature-card">
-          <div className="feature-icon">⚡</div>
+          <div className="feature-icon">02</div>
           <h3 className="feature-title">Быстрые ответы</h3>
           <p className="feature-description">
             Обсуждайте в чате, уточняйте детали, просите примеры и сравнения.
@@ -38,7 +31,7 @@ const About = () => {
         </div>
 
         <div className="feature-card">
-          <div className="feature-icon">🧭</div>
+          <div className="feature-icon">03</div>
           <h3 className="feature-title">Ориентир в материалах</h3>
           <p className="feature-description">
             Наводящие вопросы по разделам и ключевым понятиям помогают быстро
@@ -47,7 +40,7 @@ const About = () => {
         </div>
 
         <div className="feature-card">
-          <div className="feature-icon">🔒</div>
+          <div className="feature-icon">04</div>
           <h3 className="feature-title">Ваши данные под защитой</h3>
           <p className="feature-description">
             Доступ к диалогам только у авторизованных пользователей.
@@ -56,11 +49,11 @@ const About = () => {
       </div>
 
       <div className="about-team">
-        <h2 className="team-title">Команда</h2>
+        <p className="about-kicker">PRODUCT NOTE</p>
+        <h2 className="team-title">Простой интерфейс вместо отдельного поиска по файлам</h2>
         <p className="team-description">
-          Мы инженеры и преподаватели, которые хотят сделать обучение и работу с
-          документами быстрее и понятнее. Если у вас есть предложения —
-          напишите нам, мы открыты к улучшениям.
+          Добавляйте документы, задавайте вопросы в чате и возвращайтесь к
+          сохраненным диалогам, когда нужно продолжить работу.
         </p>
       </div>
 
@@ -76,4 +69,3 @@ const About = () => {
 };
 
 export default About;
-
