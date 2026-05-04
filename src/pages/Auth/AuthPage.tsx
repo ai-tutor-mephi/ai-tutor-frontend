@@ -59,7 +59,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
           </div>
           {mode === "register" && (
             <div className="form-group">
-              <label>Email</label>
+              <label>Электронная почта</label>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

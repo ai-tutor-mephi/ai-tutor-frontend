@@ -1,15 +1,26 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import * as api from "../../services/api";
+import logo from "../../assets/AI_Tutor_LOGO.PNG";
 import "./UploadPage.css";
 
 type Props = { onLogout: () => void };
 
+type ChatMessage = api.DialogMessagesDto & {
+  localId: string;
+  status: "sent" | "pending" | "error";
+  retryQuestion?: string;
+};
+
 const MIN_SIDEBAR_WIDTH = 240;
 const MAX_SIDEBAR_WIDTH = 420;
+const MIN_RIGHT_SIDEBAR_WIDTH = 280;
+const MAX_RIGHT_SIDEBAR_WIDTH = 460;
+const ASSISTANT_PENDING_TEXT = "AI Tutor готовит ответ...";
+const ASSISTANT_ERROR_TEXT = "Не удалось получить ответ. Попробуйте повторить запрос.";
 
 const PROMPT_SUGGESTIONS = [
   "Сделай конспект",
@@ -33,21 +44,25 @@ function validateFiles(files: File[]): string | null {
 
 export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const resizeStartX = useRef(0);
   const resizeStartWidth = useRef(300);
+  const messageIdRef = useRef(0);
+  const activeDialogIdRef = useRef<number | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const [dialogs, setDialogs] = useState<api.DialogInfo[]>([]);
   const [currentDialogId, setCurrentDialogId] = useState<number | null>(null);
-  const [messages, setMessages] = useState<api.DialogMessagesDto[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentFiles, setCurrentFiles] = useState<api.FileResponse[]>([]);
   const [quizzes, setQuizzes] = useState<api.QuizResponse[]>([]);
   const [inputText, setInputText] = useState("");
   const [createFiles, setCreateFiles] = useState<File[]>([]);
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [sidebarWidth, setSidebarWidth] = useState(300);
+  const [rightSidebarWidth, setRightSidebarWidth] = useState(340);
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
+  const [filesCollapsed, setFilesCollapsed] = useState(false);
   const [suggestionsCollapsed, setSuggestionsCollapsed] = useState(false);
   const [leftMobileOpen, setLeftMobileOpen] = useState(false);
   const [rightMobileOpen, setRightMobileOpen] = useState(false);
@@ -84,6 +99,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   }, []);
 
   useEffect(() => {
+    activeDialogIdRef.current = currentDialogId;
     if (currentDialogId !== null) {
       loadMessages(currentDialogId);
       loadDialogFiles(currentDialogId);
@@ -94,6 +110,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       setCurrentFiles([]);
       setQuizzes([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDialogId]);
 
   useEffect(() => {
@@ -104,6 +121,13 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       return () => window.removeEventListener("click", handleClick);
     }
   }, [contextMenu.visible]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: loadingMessages ? "auto" : "smooth",
+      block: "end",
+    });
+  }, [messages, loadingMessages, currentDialogId]);
 
   const loadDialogs = async () => {
     setLoadingDialogs(true);
@@ -121,13 +145,24 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     setLoadingMessages(true);
     try {
       const data = await api.getDialogMessages(dialogId);
-      setMessages(data.dialogMessages);
+      setMessages(
+        data.dialogMessages.map((message) => ({
+          ...message,
+          localId: nextLocalMessageId(),
+          status: "sent",
+        }))
+      );
     } catch (err: any) {
       setError(err.message || "Не удалось загрузить сообщения диалога");
     } finally {
       setLoadingMessages(false);
     }
   };
+
+  function nextLocalMessageId() {
+    messageIdRef.current += 1;
+    return `message-${messageIdRef.current}`;
+  }
 
   const loadDialogFiles = async (dialogId: number) => {
     setLoadingFiles(true);
@@ -221,30 +256,87 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     }
   };
 
-  const handleSendMessage = async () => {
-    const question = inputText.trim();
-    if (!question) return;
-    if (!currentDialogId) {
-      setError("Выберите диалог, чтобы отправлять сообщения");
-      return;
-    }
-
+  const submitQuestion = async (
+    dialogId: number,
+    question: string,
+    assistantMessageId: string
+  ) => {
     setSending(true);
     setError(null);
 
     try {
-      const response = await api.sendMessage(currentDialogId, question);
-      setMessages((prev) => [
-        ...prev,
-        { message: question, role: "USER" },
-        { message: response.answer, role: "BOT" },
-      ]);
-      setInputText("");
+      const response = await api.sendMessage(dialogId, question);
+      if (activeDialogIdRef.current !== dialogId) return;
+
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.localId === assistantMessageId
+            ? { ...message, message: response.answer, status: "sent" }
+            : message
+        )
+      );
     } catch (err: any) {
-      setError(err.message || "Не удалось отправить сообщение");
+      if (activeDialogIdRef.current !== dialogId) return;
+
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.localId === assistantMessageId
+            ? {
+                ...message,
+                message: err.message || ASSISTANT_ERROR_TEXT,
+                status: "error",
+                retryQuestion: question,
+              }
+            : message
+        )
+      );
     } finally {
       setSending(false);
     }
+  };
+
+  const handleSendMessage = () => {
+    const question = inputText.trim();
+    if (!question || sending) return;
+
+    const dialogId = currentDialogId;
+    if (!dialogId) {
+      setError("Выберите диалог, чтобы отправлять сообщения");
+      return;
+    }
+
+    setError(null);
+    setInputText("");
+
+    const userMessage: ChatMessage = {
+      localId: nextLocalMessageId(),
+      message: question,
+      role: "USER",
+      status: "sent",
+    };
+    const assistantMessage: ChatMessage = {
+      localId: nextLocalMessageId(),
+      message: ASSISTANT_PENDING_TEXT,
+      role: "BOT",
+      status: "pending",
+      retryQuestion: question,
+    };
+
+    setMessages((prev) => [...prev, userMessage, assistantMessage]);
+    submitQuestion(dialogId, question, assistantMessage.localId);
+  };
+
+  const retryAssistantMessage = (message: ChatMessage) => {
+    if (!currentDialogId || !message.retryQuestion || sending) return;
+
+    setMessages((prev) =>
+      prev.map((item) =>
+        item.localId === message.localId
+          ? { ...item, message: ASSISTANT_PENDING_TEXT, status: "pending" }
+          : item
+      )
+    );
+    submitQuestion(currentDialogId, message.retryQuestion, message.localId);
   };
 
   const handleGenerateQuiz = async () => {
@@ -369,6 +461,30 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     window.addEventListener("mouseup", handleUp);
   };
 
+  const startRightResize = (event: React.MouseEvent<HTMLDivElement>) => {
+    resizeStartX.current = event.clientX;
+    resizeStartWidth.current = rightSidebarWidth;
+
+    const handleMove = (moveEvent: MouseEvent) => {
+      const nextWidth =
+        resizeStartWidth.current + resizeStartX.current - moveEvent.clientX;
+      setRightSidebarWidth(
+        Math.min(
+          MAX_RIGHT_SIDEBAR_WIDTH,
+          Math.max(MIN_RIGHT_SIDEBAR_WIDTH, nextWidth)
+        )
+      );
+    };
+
+    const handleUp = () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+  };
+
   const selectDialog = (dialogId: number) => {
     setCurrentDialogId(dialogId);
     setLeftMobileOpen(false);
@@ -394,16 +510,6 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       <Link className="sidebar-nav-link" to="/about">
         О проекте
       </Link>
-      <Link
-        className={`sidebar-nav-link ${
-          location.pathname.startsWith("/dialogs") || location.pathname.startsWith("/upload")
-            ? "active"
-            : ""
-        }`}
-        to="/dialogs"
-      >
-        Диалоги
-      </Link>
     </nav>
   );
 
@@ -418,7 +524,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
         onClick={openRightMobilePanel}
         disabled={!currentDialogId}
       >
-        Контекст
+        Материалы
       </button>
     </div>
   );
@@ -455,10 +561,13 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       aria-label="Диалоги"
     >
       <div className="sidebar-header">
-        {!leftCollapsed && <h2>Диалоги</h2>}
+        <div className="sidebar-brand">
+          <img src={logo} alt="Логотип AI Tutor" className="sidebar-brand-logo" />
+          {!leftCollapsed && <span>AI Tutor</span>}
+        </div>
         <button
           type="button"
-          className="collapse-icon-btn"
+          className="sidebar-toggle-btn"
           onClick={() => setLeftCollapsed((value) => !value)}
           aria-label={leftCollapsed ? "Развернуть левую панель" : "Свернуть левую панель"}
           title={leftCollapsed ? "Развернуть" : "Свернуть"}
@@ -477,6 +586,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
           >
             Новый диалог
           </button>
+          <div className="sidebar-section-label">Диалоги</div>
           {renderDialogList()}
           <div className="account-block">
             <div className="avatar-circle">{userName?.charAt(0).toUpperCase() || "?"}</div>
@@ -502,13 +612,22 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   const renderRightSidebar = () => (
     <aside
       className={`context-sidebar ${rightCollapsed ? "collapsed" : ""}`}
-      aria-label="Контекст диалога"
+      style={{ width: rightCollapsed ? undefined : rightSidebarWidth }}
+      aria-label="Материалы диалога"
     >
+      {!rightCollapsed && (
+        <div
+          className="right-sidebar-resize-handle"
+          onMouseDown={startRightResize}
+          role="separator"
+          aria-orientation="vertical"
+        />
+      )}
       <div className="context-header">
-        {!rightCollapsed && <h2>Контекст</h2>}
+        {!rightCollapsed && <h2>Материалы</h2>}
         <button
           type="button"
-          className="collapse-icon-btn"
+          className="sidebar-toggle-btn"
           onClick={() => setRightCollapsed((value) => !value)}
           aria-label={rightCollapsed ? "Развернуть правую панель" : "Свернуть правую панель"}
           title={rightCollapsed ? "Развернуть" : "Свернуть"}
@@ -520,52 +639,67 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       {!rightCollapsed && (
         <div className="context-scroll">
           <section className="context-section">
-            <div className="section-heading">
+            <div className="section-heading collapsible-heading">
               <h3>Файлы</h3>
-              <span>{currentFiles.length}</span>
+              <div className="section-heading-actions">
+                <span>{currentFiles.length}</span>
+                <button
+                  type="button"
+                  className="section-toggle-btn"
+                  onClick={() => setFilesCollapsed((value) => !value)}
+                  aria-label={filesCollapsed ? "Развернуть файлы" : "Свернуть файлы"}
+                  title={filesCollapsed ? "Развернуть" : "Свернуть"}
+                >
+                  {filesCollapsed ? "⌄" : "⌃"}
+                </button>
+              </div>
             </div>
-            {!currentDialogId && (
-              <p className="muted-text">Выберите диалог, чтобы увидеть файлы.</p>
+            {!filesCollapsed && (
+              <>
+                {!currentDialogId && (
+                  <p className="muted-text">Выберите диалог, чтобы увидеть файлы.</p>
+                )}
+                {currentDialogId && loadingFiles && (
+                  <p className="muted-text">Загружаем файлы...</p>
+                )}
+                {currentDialogId && !loadingFiles && currentFiles.length === 0 && (
+                  <p className="muted-text">
+                    Файлы пока не прикреплены. Добавьте материалы, чтобы AI Tutor
+                    использовал их в этом диалоге.
+                  </p>
+                )}
+                {currentFiles.length > 0 && (
+                  <ul className="file-list">
+                    {currentFiles.map((file) => (
+                      <li key={file.fileId} className="file-item">
+                        <span>{file.originalFileName}</span>
+                        <small>№ {file.fileId}</small>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <label className="file-picker">
+                  {uploadFiles.length > 0
+                    ? `Выбрано файлов: ${uploadFiles.length}`
+                    : "Выбрать файлы"}
+                  <input
+                    type="file"
+                    onChange={(event) => handleFileSelect(event, "upload")}
+                    multiple
+                    disabled={!currentDialogId || uploading}
+                    accept=".txt,.docx,.pdf"
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="primary-btn"
+                  onClick={handleUploadFilesToDialog}
+                  disabled={!currentDialogId || uploadFiles.length === 0 || uploading}
+                >
+                  {uploading ? "Загружаем..." : "Добавить в диалог"}
+                </button>
+              </>
             )}
-            {currentDialogId && loadingFiles && (
-              <p className="muted-text">Загружаем файлы...</p>
-            )}
-            {currentDialogId && !loadingFiles && currentFiles.length === 0 && (
-              <p className="muted-text">
-                No files attached yet. Add learning materials so AI Tutor can use
-                them in this dialog.
-              </p>
-            )}
-            {currentFiles.length > 0 && (
-              <ul className="file-list">
-                {currentFiles.map((file) => (
-                  <li key={file.fileId} className="file-item">
-                    <span>{file.originalFileName}</span>
-                    <small>ID {file.fileId}</small>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <label className="file-picker">
-              {uploadFiles.length > 0
-                ? `Выбрано файлов: ${uploadFiles.length}`
-                : "Выбрать файлы"}
-              <input
-                type="file"
-                onChange={(event) => handleFileSelect(event, "upload")}
-                multiple
-                disabled={!currentDialogId || uploading}
-                accept=".txt,.docx,.pdf"
-              />
-            </label>
-            <button
-              type="button"
-              className="primary-btn"
-              onClick={handleUploadFilesToDialog}
-              disabled={!currentDialogId || uploadFiles.length === 0 || uploading}
-            >
-              {uploading ? "Загружаем..." : "Добавить в диалог"}
-            </button>
           </section>
 
           <section className="context-section">
@@ -613,7 +747,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
               onClick={() => setShowGenerateQuiz(true)}
               disabled={!currentDialogId || generatingQuiz}
             >
-              Создать тест из диалога
+              Создать тест по диалогу
             </button>
             {loadingQuizzes && <p className="muted-text">Загружаем тесты...</p>}
             {!loadingQuizzes && currentDialogId && quizzes.length === 0 && (
@@ -662,13 +796,6 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                   <p>Текущий диалог</p>
                   <h2>{selectedDialog?.title || "Без названия"}</h2>
                 </div>
-                <button
-                  type="button"
-                  className="secondary-btn desktop-context-btn"
-                  onClick={() => setRightCollapsed(false)}
-                >
-                  Контекст
-                </button>
               </div>
               <div className="messages-container">
                 {loadingMessages && (
@@ -683,48 +810,74 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                     </p>
                   </div>
                 )}
-                {messages.map((msg, index) => (
+                {messages.map((msg) => (
                   <article
-                    key={`${msg.role}-${index}`}
+                    key={msg.localId}
                     className={`message ${
                       msg.role === "USER" ? "user-message" : "bot-message"
+                    } ${msg.status === "pending" ? "pending-message" : ""} ${
+                      msg.status === "error" ? "error-message-inline" : ""
                     }`}
                   >
                     <div className="message-header">
                       {msg.role === "USER" ? "Вы" : "AI Tutor"}
                     </div>
-                    <ReactMarkdown
-                      className="message-markdown"
-                      remarkPlugins={[remarkGfm, remarkBreaks]}
-                      skipHtml={false}
-                      components={{
-                        a: ({ children, ...props }) => (
-                          <a {...props} target="_blank" rel="noopener noreferrer">
-                            {children}
-                          </a>
-                        ),
-                        code({ inline, className, children, ...props }) {
-                          const language =
-                            /language-(\w+)/.exec(className || "")?.[1] || "";
-                          if (inline) {
-                            return (
-                              <code className={`inline-code ${language}`} {...props}>
+                    {msg.status === "pending" ? (
+                      <div className="typing-message" aria-live="polite">
+                        <span>{ASSISTANT_PENDING_TEXT}</span>
+                        <span className="typing-dots" aria-hidden="true">
+                          <span />
+                          <span />
+                          <span />
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        <ReactMarkdown
+                          className="message-markdown"
+                          remarkPlugins={[remarkGfm, remarkBreaks]}
+                          skipHtml={false}
+                          components={{
+                            a: ({ children, ...props }) => (
+                              <a {...props} target="_blank" rel="noopener noreferrer">
                                 {children}
-                              </code>
-                            );
-                          }
-                          return (
-                            <pre className={`code-block ${language}`}>
-                              <code {...props}>{children}</code>
-                            </pre>
-                          );
-                        },
-                      }}
-                    >
-                      {msg.message}
-                    </ReactMarkdown>
+                              </a>
+                            ),
+                            code({ inline, className, children, ...props }) {
+                              const language =
+                                /language-(\w+)/.exec(className || "")?.[1] || "";
+                              if (inline) {
+                                return (
+                                  <code className={`inline-code ${language}`} {...props}>
+                                    {children}
+                                  </code>
+                                );
+                              }
+                              return (
+                                <pre className={`code-block ${language}`}>
+                                  <code {...props}>{children}</code>
+                                </pre>
+                              );
+                            },
+                          }}
+                        >
+                          {msg.message}
+                        </ReactMarkdown>
+                        {msg.status === "error" && msg.retryQuestion && (
+                          <button
+                            type="button"
+                            className="retry-message-btn"
+                            onClick={() => retryAssistantMessage(msg)}
+                            disabled={sending}
+                          >
+                            Повторить
+                          </button>
+                        )}
+                      </>
+                    )}
                   </article>
                 ))}
+                <div ref={messagesEndRef} aria-hidden="true" />
               </div>
 
               <div className="message-input-wrapper">
@@ -805,7 +958,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mobile-drawer-header">
-              <h2>Контекст</h2>
+              <h2>Материалы</h2>
               <button type="button" onClick={() => setRightMobileOpen(false)}>
                 Закрыть
               </button>
@@ -825,7 +978,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 type="button"
                 onClick={() => setShowCreateDialog(false)}
               >
-                x
+                ×
               </button>
             </div>
             <div className="modal-body">
@@ -850,7 +1003,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                   {createFiles.map((file) => (
                     <div key={`${file.name}-${file.size}`} className="file-item">
                       <span>{file.name}</span>
-                      <small>{Math.ceil(file.size / 1024)} KB</small>
+                      <small>{Math.ceil(file.size / 1024)} КБ</small>
                     </div>
                   ))}
                 </div>
@@ -891,7 +1044,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 type="button"
                 onClick={() => setShowGenerateQuiz(false)}
               >
-                x
+                ×
               </button>
             </div>
             <div className="modal-body">
@@ -899,7 +1052,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 Укажите количество вопросов для теста по текущему диалогу.
               </p>
               <label className="number-field">
-                <span>Number of questions</span>
+                <span>Количество вопросов</span>
                 <input
                   type="number"
                   min={1}
@@ -927,7 +1080,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                   generatingQuiz || questionsCount < 1 || questionsCount > 20
                 }
               >
-                {generatingQuiz ? "Generating test..." : "Создать"}
+                {generatingQuiz ? "Генерация..." : "Сгенерировать"}
               </button>
             </div>
           </div>
@@ -963,7 +1116,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 type="button"
                 onClick={() => setShowRenameModal(false)}
               >
-                x
+                ×
               </button>
             </div>
             <div className="modal-body">

@@ -22,77 +22,56 @@ const Home: React.FC<Props> = ({ isAuthenticated }) => {
     <div className="home-container">
       <section className="home-hero">
         <div className="home-logo">
-          <img src={logo} alt="AI Tutor logo" />
+          <img src={logo} alt="Логотип AI Tutor" />
           <span>AI Tutor</span>
         </div>
-        <h1>
-          AI Tutor помогает быстро разобраться в ваших материалах.
-        </h1>
+        <h1>Учитесь по своим материалам быстрее</h1>
         <p className="home-lead">
-          Загружайте конспекты, статьи или отчёты. Тьютор анализирует документы
-          и отвечает на вопросы с опорой на загруженный контекст.
+          Загружайте документы, задавайте вопросы и проверяйте понимание с
+          помощью тестов.
         </p>
         <div className="home-actions">
           <button className="try-button" onClick={handleClick}>
-            Начать работу
+            Перейти к работе
           </button>
           <button className="secondary-button" onClick={() => navigate("/about")}>
-            Как это работает
+            Подробнее о проекте
           </button>
         </div>
       </section>
 
-      <section className="home-media-grid" aria-label="Возможности AI Tutor">
-        <div className="agent-console-card">
-          <div className="console-topline">
-            <span>DOCUMENT AGENT</span>
-            <span className="status-chip">Active</span>
-          </div>
-          <div className="console-prompt">
-            <p>Вопрос</p>
-            <strong>Сравни выводы из главы 2 и отчета за апрель.</strong>
-          </div>
-          <div className="console-answer">
-            <span>Ответ AI Tutor</span>
+      <section className="home-section">
+        <div className="section-copy">
+          <h2>Что умеет AI Tutor</h2>
+        </div>
+        <div className="feature-grid">
+          <article className="info-card">
+            <h3>Ответы по вашим файлам</h3>
             <p>
-              В обоих материалах главный риск связан с неполными исходными
-              данными. В отчете он описан через метрики, в главе 2 — через
-              методологию проверки.
+              AI Tutor учитывает загруженные материалы и отвечает в контексте
+              ваших документов.
             </p>
-          </div>
-          <div className="console-files">
-            <span>lecture.pdf</span>
-            <span>report.docx</span>
-            <span>notes.txt</span>
-          </div>
-        </div>
-
-        <div className="hero-photo-card">
-          <div className="document-stack">
-            <div className="document-card primary">
-              <span>01</span>
-              <p>Загрузка материалов</p>
-            </div>
-            <div className="document-card">
-              <span>02</span>
-              <p>Диалог с контекстом</p>
-            </div>
-            <div className="document-card">
-              <span>03</span>
-              <p>Сохраненные ответы</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="trust-strip">
-        <p>Один рабочий поток для учебных материалов, статей и отчетов</p>
-        <div className="trust-items">
-          <span>TXT</span>
-          <span>DOCX</span>
-          <span>PDF</span>
-          <span>CHAT</span>
-          <span>HISTORY</span>
+          </article>
+          <article className="info-card">
+            <h3>Конспекты и тезисы</h3>
+            <p>
+              Получайте краткие конспекты, основные идеи и списки важных
+              терминов.
+            </p>
+          </article>
+          <article className="info-card">
+            <h3>Тесты по диалогу</h3>
+            <p>
+              Создавайте тесты по материалам и проверяйте, насколько хорошо вы
+              их поняли.
+            </p>
+          </article>
+          <article className="info-card">
+            <h3>История диалогов</h3>
+            <p>
+              Возвращайтесь к прошлым вопросам, ответам и созданным материалам.
+            </p>
+          </article>
         </div>
       </section>
     </div>

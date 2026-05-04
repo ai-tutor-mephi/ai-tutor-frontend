@@ -170,14 +170,40 @@
 
 .test-actions {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: var(--spacing-12);
+}
+
+.test-step-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-8);
 }
 
 .test-actions button.primary {
   border-color: var(--color-graphite);
   background: var(--color-graphite);
   color: var(--color-paper-white);
+}
+
+.test-actions button.primary:hover:not(:disabled),
+.test-actions button.primary:focus-visible:not(:disabled),
+.test-actions button.primary:active:not(:disabled) {
+  border-color: var(--color-inkwell);
+  background: var(--color-inkwell);
+  color: var(--color-paper-white);
+}
+
+.test-actions button.dialog-link-action:hover:not(:disabled),
+.test-actions button.dialog-link-action:focus-visible:not(:disabled),
+.test-actions button.dialog-link-action:active:not(:disabled),
+.test-step-actions button:not(.primary):hover:not(:disabled),
+.test-step-actions button:not(.primary):focus-visible:not(:disabled),
+.test-step-actions button:not(.primary):active:not(:disabled) {
+  background: var(--color-parchment);
+  color: var(--color-inkwell);
 }
 
 .test-actions button:disabled {
@@ -267,5 +293,19 @@
 
   .test-actions {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .test-step-actions {
+    justify-content: stretch;
+  }
+
+  .test-actions button,
+  .test-step-actions {
+    width: 100%;
+  }
+
+  .test-step-actions button {
+    flex: 1;
   }
 }

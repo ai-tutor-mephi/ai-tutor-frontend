@@ -118,7 +118,7 @@ const TestPage: React.FC = () => {
         <div className="test-state">
           <p>{error}</p>
           <button type="button" onClick={loadQuiz}>
-            Повторить
+            Попробовать снова
           </button>
           <Link to="/dialogs">К диалогам</Link>
         </div>
@@ -154,14 +154,16 @@ const TestPage: React.FC = () => {
             <h1>{quiz.test_name}</h1>
           </div>
           <button type="button" onClick={handleRetake}>
-            Пройти снова
+            Пройти заново
           </button>
         </header>
 
         <main className="test-result">
           <section className="result-summary">
-            <h2>Your result: {result.correctAnswers} of {result.totalQuestions}</h2>
-            <p>Score: {percent}%</p>
+            <h2>
+              Ваш результат: {result.correctAnswers} из {result.totalQuestions}
+            </h2>
+            <p>Результат: {percent}%</p>
           </section>
 
           <section className="result-list">
@@ -173,6 +175,9 @@ const TestPage: React.FC = () => {
                   className={`result-card ${scored?.correct ? "correct" : "incorrect"}`}
                 >
                   <h3>{question.question}</h3>
+                  <p className="result-status">
+                    {scored?.correct ? "Верно" : "Неверно"}
+                  </p>
                   <p>
                     Ваш ответ:{" "}
                     <strong>{scored?.selectedAnswer || answers[question.id] || "-"}</strong>
@@ -192,9 +197,6 @@ const TestPage: React.FC = () => {
   return (
     <div className="test-page">
       <header className="test-header">
-        <button type="button" onClick={() => navigate("/dialogs")}>
-          К диалогам
-        </button>
         <div>
           <p>Тест</p>
           <h1>{quiz.test_name}</h1>
@@ -207,7 +209,7 @@ const TestPage: React.FC = () => {
         <div className="test-progress">
           <div className="progress-copy">
             <span>
-              Question {currentIndex + 1} of {questions.length}
+              Вопрос {currentIndex + 1} из {questions.length}
             </span>
             <span>{Math.round(progress)}%</span>
           </div>
@@ -235,28 +237,37 @@ const TestPage: React.FC = () => {
         </section>
 
         <div className="test-actions">
-          <button type="button" onClick={handleBack} disabled={currentIndex === 0}>
-            Back
+          <button
+            type="button"
+            className="dialog-link-action"
+            onClick={() => navigate("/dialogs")}
+          >
+            К диалогам
           </button>
-          {currentIndex === questions.length - 1 ? (
-            <button
-              type="button"
-              className="primary"
-              onClick={handleFinish}
-              disabled={!selectedAnswer || submitting}
-            >
-              {submitting ? "Проверяем..." : "Finish test"}
+          <div className="test-step-actions">
+            <button type="button" onClick={handleBack} disabled={currentIndex === 0}>
+              Назад
             </button>
-          ) : (
-            <button
-              type="button"
-              className="primary"
-              onClick={handleNext}
-              disabled={!selectedAnswer}
-            >
-              Next
-            </button>
-          )}
+            {currentIndex === questions.length - 1 ? (
+              <button
+                type="button"
+                className="primary"
+                onClick={handleFinish}
+                disabled={!selectedAnswer || submitting}
+              >
+                {submitting ? "Проверка..." : "Завершить тест"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="primary"
+                onClick={handleNext}
+                disabled={!selectedAnswer}
+              >
+                Далее
+              </button>
+            )}
+          </div>
         </div>
       </main>
     </div>

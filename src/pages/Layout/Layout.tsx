@@ -97,7 +97,7 @@ const Layout: React.FC = () => {
         <ul>
           <li>
             <Link to="/" className="logo">
-              <img src={logo} alt="AI Tutor logo" className="logo-icon" />
+              <img src={logo} alt="Логотип AI Tutor" className="logo-icon" />
               <span className="logo-text">AI Tutor</span>
             </Link>
           </li>

@@ -160,7 +160,7 @@ async function refreshAccessToken(): Promise<string> {
   const refreshTokenValue = getRefreshToken();
   if (!refreshTokenValue) {
     clearTokens();
-    throw new Error("No refresh token available");
+    throw new Error("Нет refresh-токена");
   }
 
   try {
@@ -174,7 +174,7 @@ async function refreshAccessToken(): Promise<string> {
       // Refresh token истек или невалиден
       clearTokens();
       window.location.href = "/auth";
-      throw new Error("Refresh token expired. Please login again.");
+      throw new Error("Сессия истекла. Войдите снова.");
     }
 
     const data: AuthResponse = await resp.json();
@@ -495,4 +495,3 @@ export async function changeUsername(
 export async function refreshTokens(): Promise<void> {
   await refreshAccessToken();
 }
-
