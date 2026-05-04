@@ -12,7 +12,7 @@ const Home: React.FC<Props> = ({ isAuthenticated }) => {
 
   const handleClick = () => {
     if (isAuthenticated) {
-      navigate("/upload");
+      navigate("/dialogs");
     } else {
       navigate("/auth");
     }

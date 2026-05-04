@@ -52,6 +52,38 @@ export type ChangeUsernameResponse = {
   userName: string;
 };
 
+export type QuizQuestionResponse = {
+  id: number;
+  question: string;
+  variants: string[];
+};
+
+export type QuizResponse = {
+  id: number;
+  test_name: string;
+  questions: QuizQuestionResponse[];
+};
+
+export type QuizAnswerRequest = {
+  questionId: number;
+  answer: string;
+};
+
+export type QuizQuestionScoreResponse = {
+  questionId: number;
+  selectedAnswer?: string;
+  correctAnswer: string;
+  correct: boolean;
+};
+
+export type QuizScoreResponse = {
+  quizId: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  score: number;
+  questions: QuizQuestionScoreResponse[];
+};
+
 // ============ TOKEN MANAGEMENT ============
 
 const TOKEN_KEY = "accessToken";
@@ -392,6 +424,58 @@ export async function changeDialogTitle(
   return handleResponse<DialogInfo>(resp);
 }
 
+// ============ QUIZ API ============
+
+export async function generateQuiz(
+  dialogId: number,
+  questionsCount: number
+): Promise<QuizResponse> {
+  const params = new URLSearchParams({
+    dialogId: String(dialogId),
+    questionsCount: String(questionsCount),
+  });
+  const resp = await fetchWithAuth(`${BASE}/api/quiz?${params.toString()}`, {
+    method: "POST",
+  });
+  return handleResponse<QuizResponse>(resp);
+}
+
+export async function getDialogQuizzes(
+  dialogId: number
+): Promise<QuizResponse[]> {
+  const params = new URLSearchParams({ dialogId: String(dialogId) });
+  const resp = await fetchWithAuth(`${BASE}/api/quiz?${params.toString()}`, {
+    method: "GET",
+  });
+  return handleResponse<QuizResponse[]>(resp);
+}
+
+export async function getQuiz(
+  dialogId: number,
+  quizId: number
+): Promise<QuizResponse> {
+  const params = new URLSearchParams({ dialogId: String(dialogId) });
+  const resp = await fetchWithAuth(
+    `${BASE}/api/quiz/${quizId}?${params.toString()}`,
+    {
+      method: "GET",
+    }
+  );
+  return handleResponse<QuizResponse>(resp);
+}
+
+export async function scoreQuiz(
+  quizId: number,
+  answers: QuizAnswerRequest[]
+): Promise<QuizScoreResponse> {
+  const resp = await fetchWithAuth(`${BASE}/api/quiz/${quizId}/score`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ answers }),
+  });
+  return handleResponse<QuizScoreResponse>(resp);
+}
+
 // ============ USER API ============
 
 // РР·РјРµРЅРёС‚СЊ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
@@ -407,9 +491,8 @@ export async function changeUsername(
 }
 
 
-// Принудительно обновляем токены (нужно, чтобы новый username попал в JWT)
+//    (,   username   JWT)
 export async function refreshTokens(): Promise<void> {
   await refreshAccessToken();
 }
-
 
