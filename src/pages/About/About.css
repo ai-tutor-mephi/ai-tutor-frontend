@@ -1,8 +1,8 @@
 .about-container {
-  --about-accent: #a8cfa8;
-  --about-accent-strong: #7faf7f;
-  --about-accent-soft: #eef7ee;
-  --about-accent-text: #4f7a4f;
+  --about-accent: var(--color-parchment);
+  --about-accent-strong: var(--color-faded-stone);
+  --about-accent-soft: var(--color-parchment);
+  --about-accent-text: var(--color-graphite);
   width: min(100%, 1040px);
   margin: 0 auto;
   padding: 72px var(--spacing-16);
@@ -24,7 +24,7 @@
   align-items: center;
   min-height: 39px;
   padding: var(--spacing-8) var(--spacing-12);
-  border: 1px solid rgba(127, 175, 127, 0.36);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-buttons);
   background: var(--about-accent-soft);
   color: var(--about-accent-text);
@@ -62,7 +62,7 @@
   max-width: 960px;
   margin-top: var(--spacing-32);
   padding: var(--spacing-16);
-  border: 1px solid rgba(127, 175, 127, 0.34);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-cards);
   background: var(--about-accent-soft);
   color: var(--color-graphite);
