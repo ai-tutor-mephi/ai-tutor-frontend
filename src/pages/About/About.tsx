@@ -4,76 +4,33 @@ import "./About.css";
 const About = () => {
   return (
     <div className="about-container">
-      <h1 className="about-header">О проекте AI Tutor</h1>
-
-      <div className="about-content">
-        <p className="about-text">
-          <span className="about-highlight">AI Tutor</span> — это помощник,
-          который читает ваши материалы (конспекты, статьи, отчёты) и отвечает
-          на вопросы, опираясь на загруженный контекст.
-        </p>
-
-        <p className="about-text">
-          Мы делаем работу с документами проще: добавляйте файлы, задавайте
-          вопросы в чате и получайте ответы с примерами и пояснениями. Все
-          диалоги сохраняются, а файлы можно дополнять в любое время.
-        </p>
-      </div>
-
-      <div className="about-features">
-        <div className="feature-card">
-          <div className="feature-icon">📂</div>
-          <h3 className="feature-title">Контекст из файлов</h3>
-          <p className="feature-description">
-            Поддерживаем TXT, DOCX, PDF и отвечаем с учётом ваших материалов.
+      <section className="about-hero">
+        <p className="about-kicker about-kicker-accent">О ПРОЕКТЕ</p>
+        <h1 className="about-header">
+          AI Tutor помогает учиться по вашим материалам
+        </h1>
+        <div className="about-intro">
+          <p>
+            AI Tutor — учебный проект, созданный студентами НИЯУ МИФИ в рамках
+            проектной практики. Проект посвящён изучению и применению больших
+            языковых моделей для эффективной работы с документами.
+          </p>
+          <p>
+            Сервис позволяет загрузить несколько файлов, обсуждать их содержимое
+            в формате диалога, получать ответы с учётом контекста документов и
+            закреплять материал с помощью тестов-викторин, сгенерированных на
+            основе загруженных файлов и истории общения.
           </p>
         </div>
+      </section>
 
-        <div className="feature-card">
-          <div className="feature-icon">⚡</div>
-          <h3 className="feature-title">Быстрые ответы</h3>
-          <p className="feature-description">
-            Обсуждайте в чате, уточняйте детали, просите примеры и сравнения.
-          </p>
-        </div>
-
-        <div className="feature-card">
-          <div className="feature-icon">🧭</div>
-          <h3 className="feature-title">Ориентир в материалах</h3>
-          <p className="feature-description">
-            Наводящие вопросы по разделам и ключевым понятиям помогают быстро
-            найти нужное место в документах.
-          </p>
-        </div>
-
-        <div className="feature-card">
-          <div className="feature-icon">🔒</div>
-          <h3 className="feature-title">Ваши данные под защитой</h3>
-          <p className="feature-description">
-            Доступ к диалогам только у авторизованных пользователей.
-          </p>
-        </div>
-      </div>
-
-      <div className="about-team">
-        <h2 className="team-title">Команда</h2>
-        <p className="team-description">
-          Мы инженеры и преподаватели, которые хотят сделать обучение и работу с
-          документами быстрее и понятнее. Если у вас есть предложения —
-          напишите нам, мы открыты к улучшениям.
-        </p>
-      </div>
-
-      <div className="about-content">
-        <p className="about-text">
-          Попробуйте загрузить свои материалы и спросить AI Tutor о том, что
-          важно именно вам. Мы продолжаем развиваться, чтобы быть полезнее
-          каждый день.
-        </p>
-      </div>
+      <aside className="about-disclaimer">
+        Важно: AI Tutor остаётся учебным проектом. Сервис может ошибаться,
+        поэтому значимую информацию лучше перепроверять по исходным документам.
+        Также не рекомендуется загружать в сервис конфиденциальные материалы.
+      </aside>
     </div>
   );
 };
 
 export default About;
-

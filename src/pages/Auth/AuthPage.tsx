@@ -33,7 +33,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
         await api.login(userName, password);
       }
       await onAuthSuccess();
-      navigate("/upload");
+      navigate("/dialogs");
     } catch (e: any) {
       setErr(e.message || "Не удалось выполнить запрос");
     }
@@ -59,7 +59,7 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
           </div>
           {mode === "register" && (
             <div className="form-group">
-              <label>Email</label>
+              <label>Электронная почта</label>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

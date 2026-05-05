@@ -12,7 +12,7 @@ const Home: React.FC<Props> = ({ isAuthenticated }) => {
 
   const handleClick = () => {
     if (isAuthenticated) {
-      navigate("/upload");
+      navigate("/dialogs");
     } else {
       navigate("/auth");
     }
@@ -20,31 +20,60 @@ const Home: React.FC<Props> = ({ isAuthenticated }) => {
 
   return (
     <div className="home-container">
-      <div className="home-card">
+      <section className="home-hero">
         <div className="home-logo">
-          <img src={logo} alt="AI Tutor logo" />
+          <img src={logo} alt="Логотип AI Tutor" />
           <span>AI Tutor</span>
         </div>
-        <h2>
-          AI Tutor помогает быстро разобраться в ваших материалах{" "}
-          <span className="highlight">и отвечает на вопросы по ним</span>.
-        </h2>
-        <p>
-          Загружайте конспекты, статьи или отчёты — тьютор проанализирует их и
-          будет отвечать на вопросы с опорой на загруженный контекст.
+        <h1>Учитесь по своим материалам быстрее</h1>
+        <p className="home-lead">
+          Загружайте документы, задавайте вопросы и проверяйте понимание с
+          помощью тестов.
         </p>
-        <p>
-          Общайтесь в формате чата: уточняйте, просите примеры, сравнивайте
-          версии. Все диалоги сохраняются, а файлы можно дополнять в любой
-          момент.
-        </p>
-        <h1 className="cta-text">
-          Попробуйте и получите ответ за пару секунд!
-        </h1>
-        <button className="try-button" onClick={handleClick}>
-          Начать
-        </button>
-      </div>
+        <div className="home-actions">
+          <button className="try-button" onClick={handleClick}>
+            Перейти к работе
+          </button>
+          <button className="secondary-button" onClick={() => navigate("/about")}>
+            Подробнее о проекте
+          </button>
+        </div>
+      </section>
+
+      <section className="home-section">
+        <div className="section-copy">
+          <h2>Что умеет AI Tutor</h2>
+        </div>
+        <div className="feature-grid">
+          <article className="info-card">
+            <h3>Ответы по вашим файлам</h3>
+            <p>
+              AI Tutor учитывает загруженные материалы и отвечает в контексте
+              ваших документов.
+            </p>
+          </article>
+          <article className="info-card">
+            <h3>Конспекты и тезисы</h3>
+            <p>
+              Получайте краткие конспекты, основные идеи и списки важных
+              терминов.
+            </p>
+          </article>
+          <article className="info-card">
+            <h3>Тесты по диалогу</h3>
+            <p>
+              Создавайте тесты по материалам и проверяйте, насколько хорошо вы
+              их поняли.
+            </p>
+          </article>
+          <article className="info-card">
+            <h3>История диалогов</h3>
+            <p>
+              Возвращайтесь к прошлым вопросам, ответам и созданным материалам.
+            </p>
+          </article>
+        </div>
+      </section>
     </div>
   );
 };

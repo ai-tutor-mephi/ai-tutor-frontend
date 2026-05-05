@@ -7,9 +7,7 @@ const NotFound: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.content}>
         <div className={styles.animation}>
-          <div className={styles.number}>4</div>
-          <div className={styles.astronaut}>🧑‍🚀</div>
-          <div className={styles.number}>4</div>
+          <div className={styles.number}>404</div>
         </div>
 
         <h1 className={styles.title}>Страница не найдена</h1>

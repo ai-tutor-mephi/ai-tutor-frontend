@@ -8,6 +8,7 @@ import { AuthPage } from "./pages/Auth/AuthPage";
 import * as api from "./services/api";
 import { PrivateRoute } from "./components/PrivateRoute";
 import Upload from "./pages/Upload/Upload";
+import TestPage from "./pages/Test/TestPage";
 import LoadingPage from "./pages/Loading/LoadingPage";
 import "./App.css";
 
@@ -40,6 +41,22 @@ function App() {
             element={
               <PrivateRoute isAuthenticated={isAuthenticated}>
                 <Upload onLogout={() => setIsAuthenticated(false)} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/dialogs"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <Upload onLogout={() => setIsAuthenticated(false)} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/dialogs/:dialogId/tests/:testId"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <TestPage />
               </PrivateRoute>
             }
           />

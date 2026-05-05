@@ -16,6 +16,8 @@ const Layout: React.FC = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const isWorkspace =
+    location.pathname.startsWith("/dialogs") || location.pathname.startsWith("/upload");
 
   useEffect(() => {
     if (api.isAuthenticated()) {
@@ -90,11 +92,12 @@ const Layout: React.FC = () => {
 
   return (
     <div className="app">
+      {!isWorkspace && (
       <nav className="navigation">
         <ul>
           <li>
             <Link to="/" className="logo">
-              <img src={logo} alt="AI Tutor logo" className="logo-icon" />
+              <img src={logo} alt="Логотип AI Tutor" className="logo-icon" />
               <span className="logo-text">AI Tutor</span>
             </Link>
           </li>
@@ -107,7 +110,7 @@ const Layout: React.FC = () => {
             </li>
             {userName && (
               <li>
-                <Link to="/upload">Диалоги</Link>
+                <Link to="/dialogs">Диалоги</Link>
               </li>
             )}
             {userName && (
@@ -138,11 +141,13 @@ const Layout: React.FC = () => {
           </div>
         </ul>
       </nav>
+      )}
 
-      <main className="content">
+      <main className={`content ${isWorkspace ? "workspace-content" : ""}`}>
         <Outlet />
       </main>
 
+      {!isWorkspace && (
       <footer>
         <div className="footer-content">
           <p>
@@ -153,6 +158,7 @@ const Layout: React.FC = () => {
           <p>Есть вопросы? Пишите нам в telegram: @WocherZ</p>
         </div>
       </footer>
+      )}
 
       {showChangeNameModal && (
         <div className="modal-overlay" onClick={() => setShowChangeNameModal(false)}>

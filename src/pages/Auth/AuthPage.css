@@ -1,120 +1,118 @@
 .auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 57px);
+  padding: 64px 20px;
+  background: var(--color-parchment);
+}
+
+.auth-card {
+  width: min(100%, 460px);
+  padding: var(--spacing-32);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-cards);
+  background: var(--color-paper-white);
+}
+
+.auth-title {
+  margin: 0 0 var(--spacing-16);
+  color: var(--color-inkwell);
+  font-size: 32px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  margin-bottom: var(--spacing-8);
+  color: var(--color-graphite);
+  font-size: var(--text-body-sm);
+}
+
+.form-group input {
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-inputs);
+  background: var(--color-parchment);
+  color: var(--color-inkwell);
+  font-size: var(--text-body);
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--color-inkwell);
+  outline: none;
+}
+
+.auth-button {
+  min-height: 48px;
+  margin-top: 8px;
+  padding: 12px 24px;
+  border: 1px solid var(--color-graphite);
+  border-radius: var(--radius-buttons);
+  background: var(--color-graphite);
+  color: var(--color-paper-white);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-body-sm);
+  cursor: pointer;
+}
+
+.auth-button:hover {
+  background: var(--color-inkwell);
+}
+
+.auth-error {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px solid rgba(179, 0, 0, 0.22);
+  border-radius: var(--radius-inputs);
+  background: rgba(179, 0, 0, 0.06);
+  color: var(--color-error);
+  font-size: 14px;
+}
+
+.switch-mode {
+  margin-top: 22px;
+  color: var(--color-dusk-gray);
+  font-size: var(--text-body-sm);
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-graphite);
+  font-weight: var(--font-weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 48px 20px;
   }
-  
+
   .auth-card {
-    background: white;
-    padding: 30px 25px;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-    animation: fadeIn 0.6s ease;
+    padding: 24px;
   }
-  
+
   .auth-title {
-    margin-bottom: 20px;
-    font-size: 1.8rem;
-    color: #333;
+    font-size: 38px;
   }
-  
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-  }
-  
-  .form-group label {
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-  
-  .form-group input {
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.2s ease;
-  }
-  
-  .form-group input:focus {
-    border-color: #667eea;
-    outline: none;
-    box-shadow: 0 0 4px rgba(102, 126, 234, 0.4);
-  }
-  
-  .auth-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    font-size: 1rem;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.1s ease, box-shadow 0.2s ease;
-  }
-  
-  .auth-button:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
-  }
-  
-  .auth-error {
-    color: red;
-    margin-top: 10px;
-    font-weight: 500;
-  }
-  
-  .switch-mode {
-    margin-top: 16px;
-    font-size: 0.9rem;
-  }
-  
-  .link-button {
-    background: none;
-    border: none;
-    color: #667eea;
-    font-weight: 600;
-    cursor: pointer;
-    transition: color 0.2s ease;
-  }
-  
-  .link-button:hover {
-    color: #764ba2;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* Адаптивность */
-  @media (max-width: 480px) {
-    .auth-card {
-      padding: 20px;
-      border-radius: 12px;
-    }
-  
-    .auth-title {
-      font-size: 1.5rem;
-    }
-  }
-  
+}
