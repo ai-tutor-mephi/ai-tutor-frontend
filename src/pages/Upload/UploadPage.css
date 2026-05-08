@@ -854,6 +854,26 @@ label:has(input:disabled) {
   line-height: var(--leading-body-sm);
 }
 
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  color: var(--color-graphite);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body-sm);
+}
+
+.modal-field span {
+  color: var(--color-inkwell);
+  font-weight: var(--font-weight-medium);
+}
+
+.modal-field small {
+  color: var(--color-dusk-gray);
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+}
+
 .modal-footer {
   justify-content: flex-end;
   border-top: 1px solid var(--color-border);

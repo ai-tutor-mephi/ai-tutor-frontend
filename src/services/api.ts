@@ -326,12 +326,17 @@ export async function logout(): Promise<string> {
 
 // Создать диалог с файлами
 export async function createDialogWithFiles(
-  files: File[]
+  files: File[],
+  title = ""
 ): Promise<DialogResponse> {
   const formData = new FormData();
   files.forEach((file) => {
     formData.append("files", file);
   });
+  formData.append(
+    "request",
+    new Blob([JSON.stringify({ title })], { type: "application/json" })
+  );
 
   const resp = await fetchWithAuth(`${BASE}/dialogs/with-files`, {
     method: "POST",

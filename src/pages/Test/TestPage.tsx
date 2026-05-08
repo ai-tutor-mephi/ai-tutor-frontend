@@ -169,6 +169,8 @@ const TestPage: React.FC = () => {
           <section className="result-list">
             {quiz.questions.map((question) => {
               const scored = resultByQuestion.get(question.id);
+              const selectedResultAnswer =
+                scored?.selectedAnswer || answers[question.id] || "-";
               return (
                 <article
                   key={question.id}
@@ -178,13 +180,20 @@ const TestPage: React.FC = () => {
                   <p className="result-status">
                     {scored?.correct ? "Верно" : "Неверно"}
                   </p>
-                  <p>
-                    Ваш ответ:{" "}
-                    <strong>{scored?.selectedAnswer || answers[question.id] || "-"}</strong>
-                  </p>
-                  <p>
-                    Правильный ответ: <strong>{scored?.correctAnswer}</strong>
-                  </p>
+                  <div
+                    className={`result-answer ${
+                      scored?.correct ? "answer-correct" : "answer-incorrect"
+                    }`}
+                  >
+                    <span>Ваш ответ</span>
+                    <strong>{selectedResultAnswer}</strong>
+                  </div>
+                  {!scored?.correct && (
+                    <div className="result-answer answer-correct">
+                      <span>Правильный ответ</span>
+                      <strong>{scored?.correctAnswer}</strong>
+                    </div>
+                  )}
                 </article>
               );
             })}

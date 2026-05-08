@@ -15,10 +15,13 @@ type ChatMessage = api.DialogMessagesDto & {
   retryQuestion?: string;
 };
 
-const MIN_SIDEBAR_WIDTH = 240;
-const MAX_SIDEBAR_WIDTH = 420;
-const MIN_RIGHT_SIDEBAR_WIDTH = 280;
-const MAX_RIGHT_SIDEBAR_WIDTH = 460;
+const MIN_SIDEBAR_WIDTH = 160;
+const MAX_SIDEBAR_WIDTH = 620;
+const MIN_RIGHT_SIDEBAR_WIDTH = 200;
+const MAX_RIGHT_SIDEBAR_WIDTH = 690;
+const COLLAPSED_SIDEBAR_WIDTH = 44;
+const MIN_CHAT_AREA_WIDTH = 320;
+const LAYOUT_HORIZONTAL_PADDING = 16;
 const ASSISTANT_PENDING_TEXT = "AI Tutor готовит ответ...";
 const ASSISTANT_ERROR_TEXT = "Не удалось получить ответ. Попробуйте повторить запрос.";
 
@@ -56,6 +59,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   const [currentFiles, setCurrentFiles] = useState<api.FileResponse[]>([]);
   const [quizzes, setQuizzes] = useState<api.QuizResponse[]>([]);
   const [inputText, setInputText] = useState("");
+  const [createDialogTitle, setCreateDialogTitle] = useState("");
   const [createFiles, setCreateFiles] = useState<File[]>([]);
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [sidebarWidth, setSidebarWidth] = useState(300);
@@ -220,9 +224,13 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     setError(null);
 
     try {
-      const dialog = await api.createDialogWithFiles(createFiles);
+      const dialog = await api.createDialogWithFiles(
+        createFiles,
+        createDialogTitle.trim()
+      );
       setCurrentDialogId(dialog.dialogId);
       setCreateFiles([]);
+      setCreateDialogTitle("");
       setShowCreateDialog(false);
       await loadDialogs();
     } catch (err: any) {
@@ -445,10 +453,22 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     resizeStartWidth.current = sidebarWidth;
 
     const handleMove = (moveEvent: MouseEvent) => {
+      const rightWidth = rightCollapsed
+        ? COLLAPSED_SIDEBAR_WIDTH
+        : rightSidebarWidth;
+      const availableMaxWidth =
+        window.innerWidth -
+        LAYOUT_HORIZONTAL_PADDING -
+        rightWidth -
+        MIN_CHAT_AREA_WIDTH;
+      const maxWidth = Math.min(MAX_SIDEBAR_WIDTH, availableMaxWidth);
       const nextWidth =
         resizeStartWidth.current + moveEvent.clientX - resizeStartX.current;
       setSidebarWidth(
-        Math.min(MAX_SIDEBAR_WIDTH, Math.max(MIN_SIDEBAR_WIDTH, nextWidth))
+        Math.max(
+          MIN_SIDEBAR_WIDTH,
+          Math.min(Math.max(MIN_SIDEBAR_WIDTH, maxWidth), nextWidth)
+        )
       );
     };
 
@@ -466,12 +486,19 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     resizeStartWidth.current = rightSidebarWidth;
 
     const handleMove = (moveEvent: MouseEvent) => {
+      const leftWidth = leftCollapsed ? COLLAPSED_SIDEBAR_WIDTH : sidebarWidth;
+      const availableMaxWidth =
+        window.innerWidth -
+        LAYOUT_HORIZONTAL_PADDING -
+        leftWidth -
+        MIN_CHAT_AREA_WIDTH;
+      const maxWidth = Math.min(MAX_RIGHT_SIDEBAR_WIDTH, availableMaxWidth);
       const nextWidth =
         resizeStartWidth.current + resizeStartX.current - moveEvent.clientX;
       setRightSidebarWidth(
-        Math.min(
-          MAX_RIGHT_SIDEBAR_WIDTH,
-          Math.max(MIN_RIGHT_SIDEBAR_WIDTH, nextWidth)
+        Math.max(
+          MIN_RIGHT_SIDEBAR_WIDTH,
+          Math.min(Math.max(MIN_RIGHT_SIDEBAR_WIDTH, maxWidth), nextWidth)
         )
       );
     };
@@ -781,7 +808,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
         className="dialogs-layout"
         style={{
           gridTemplateColumns: leftCollapsed
-            ? "44px minmax(0, 1fr) auto"
+            ? `${COLLAPSED_SIDEBAR_WIDTH}px minmax(0, 1fr) auto`
             : `${sidebarWidth}px minmax(0, 1fr) auto`,
         }}
       >
@@ -986,6 +1013,19 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 Загрузите файлы (TXT, DOCX, PDF), чтобы AI Tutor знал материалы,
                 с которыми вы работаете.
               </p>
+              <label className="modal-field">
+                <span>Название диалога</span>
+                <input
+                  type="text"
+                  className="modal-input-text"
+                  value={createDialogTitle}
+                  onChange={(event) => setCreateDialogTitle(event.target.value)}
+                  placeholder="Например: Лекция по SQL"
+                  maxLength={255}
+                  disabled={creatingDialog}
+                />
+                <small>Можно оставить пустым</small>
+              </label>
               <label className="file-picker large">
                 {createFiles.length > 0
                   ? `Выбрано файлов: ${createFiles.length}`
@@ -1016,6 +1056,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 onClick={() => {
                   setShowCreateDialog(false);
                   setCreateFiles([]);
+                  setCreateDialogTitle("");
                 }}
                 disabled={creatingDialog}
               >

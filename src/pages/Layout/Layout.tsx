@@ -162,7 +162,9 @@ const Layout: React.FC<Props> = ({ isAuthenticated, onLogout }) => {
             вопросы по загруженным файлам.
           </p>
           <p>© 2025 AI Tutor. Все права защищены.</p>
-          <p>Есть вопросы? Пишите нам в telegram: @WocherZ</p>
+          <p>Есть вопросы? Пишите нам в telegram: @WocherZ
+            Гуччи флип флоп ...
+          </p>
         </div>
       </footer>
       )}
