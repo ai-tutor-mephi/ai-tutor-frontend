@@ -30,20 +30,6 @@
   display: none;
 }
 
-.error-message {
-  margin: var(--spacing-8) var(--spacing-16) 0;
-  padding: var(--spacing-8) var(--spacing-12);
-  border-radius: var(--radius-inputs);
-  font-size: var(--text-body-sm);
-  line-height: var(--leading-body-sm);
-}
-
-.error-message {
-  border: 1px solid rgba(179, 0, 0, 0.24);
-  background: rgba(179, 0, 0, 0.06);
-  color: var(--color-error);
-}
-
 .dialogs-layout {
   display: grid;
   flex: 1;

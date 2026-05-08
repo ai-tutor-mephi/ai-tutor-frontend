@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import * as api from "../../services/api";
+import ErrorToast from "../../components/ErrorToast";
 import logo from "../../assets/AI_Tutor_LOGO.PNG";
 import "./UploadPage.css";
 
@@ -153,7 +154,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       const data = await api.getDialogs();
       setDialogs(data);
     } catch (err: any) {
-      setError(err.message || "Не удалось загрузить список диалогов");
+      setError(api.getErrorMessage(err));
     } finally {
       setLoadingDialogs(false);
     }
@@ -171,7 +172,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
         }))
       );
     } catch (err: any) {
-      setError(err.message || "Не удалось загрузить сообщения диалога");
+      setError(api.getErrorMessage(err));
     } finally {
       setLoadingMessages(false);
     }
@@ -188,7 +189,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       const files = await api.getDialogFiles(dialogId);
       setCurrentFiles(files);
     } catch (err: any) {
-      setError(err.message || "Не удалось загрузить файлы диалога");
+      setError(api.getErrorMessage(err));
       setCurrentFiles([]);
     } finally {
       setLoadingFiles(false);
@@ -201,7 +202,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       const data = await api.getDialogQuizzes(dialogId);
       setQuizzes(data);
     } catch (err: any) {
-      setError(err.message || "Не удалось загрузить тесты диалога");
+      setError(api.getErrorMessage(err));
       setQuizzes([]);
     } finally {
       setLoadingQuizzes(false);
@@ -249,8 +250,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       setCreateDialogTitle("");
       setShowCreateDialog(false);
       await loadDialogs();
-    } catch {
-      setError("Не удалось создать диалог. Попробуйте ещё раз.");
+    } catch (err: any) {
+      setError(api.getErrorMessage(err));
     } finally {
       setCreatingDialog(false);
     }
@@ -274,7 +275,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       setUploadFiles([]);
       await loadDialogFiles(currentDialogId);
     } catch (err: any) {
-      setError(err.message || "Не удалось загрузить файлы");
+      setError(api.getErrorMessage(err));
     } finally {
       setUploading(false);
     }
@@ -302,12 +303,13 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     } catch (err: any) {
       if (activeDialogIdRef.current !== dialogId) return;
 
+      setError(api.getErrorMessage(err));
       setMessages((prev) =>
         prev.map((message) =>
           message.localId === assistantMessageId
             ? {
                 ...message,
-                message: err.message || ASSISTANT_ERROR_TEXT,
+                message: ASSISTANT_ERROR_TEXT,
                 status: "error",
                 retryQuestion: question,
               }
@@ -383,8 +385,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       await loadQuizzes(currentDialogId);
       setShowGenerateQuiz(false);
       navigate(`/dialogs/${currentDialogId}/tests/${quiz.id}`);
-    } catch {
-      setError("Не удалось создать тест. Попробуйте ещё раз.");
+    } catch (err: any) {
+      setError(api.getErrorMessage(err));
     } finally {
       setGeneratingQuiz(false);
     }
@@ -406,7 +408,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       }
       await loadDialogs();
     } catch (err: any) {
-      setError(err.message || "Не удалось удалить диалог");
+      setError(api.getErrorMessage(err));
     }
   };
 
@@ -455,7 +457,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       await loadDialogs();
       setShowRenameModal(false);
     } catch (err: any) {
-      setError(err.message || "Не удалось переименовать диалог");
+      setError(api.getErrorMessage(err));
     }
   };
 
@@ -865,7 +867,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
 
   return (
     <div className="dialogs-page">
-      {error && <div className="error-message">{error}</div>}
+      <ErrorToast message={error} onDismiss={() => setError(null)} />
 
       <div
         className="dialogs-layout"

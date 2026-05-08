@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as api from "../../services/api";
+import ErrorToast from "../../components/ErrorToast";
 import "./AuthPage.css";
 
 type Props = {
@@ -35,12 +36,13 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
       await onAuthSuccess();
       navigate("/dialogs");
     } catch (e: any) {
-      setErr(e.message || "Не удалось выполнить запрос");
+      setErr(api.getErrorMessage(e));
     }
   };
 
   return (
     <div className="auth-container">
+      <ErrorToast message={err} onDismiss={() => setErr(null)} />
       <div className="auth-card">
         <h2 className="auth-title">
           {mode === "login" ? "Вход" : "Регистрация"}
@@ -96,7 +98,6 @@ export const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
             {mode === "login" ? "Войти" : "Зарегистрироваться"}
           </button>
         </form>
-        {err && <div className="auth-error">{err}</div>}
         <div className="switch-mode">
           {mode === "login" ? (
             <>

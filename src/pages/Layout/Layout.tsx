@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import * as api from "../../services/api";
+import ErrorToast from "../../components/ErrorToast";
 import logo from "../../assets/AI_Tutor_LOGO.PNG";
 import "./Layout.css";
 
@@ -56,7 +57,7 @@ const Layout: React.FC<Props> = ({ isAuthenticated, onLogout }) => {
 
   const handleChangeEmailClick = () => {
     setShowProfileMenu(false);
-    alert("Смена email пока недоступна");
+    setError("Смена email пока недоступна");
   };
 
   const handleLogoutClick = async () => {
@@ -86,7 +87,7 @@ const Layout: React.FC<Props> = ({ isAuthenticated, onLogout }) => {
       setUserName(newUserName.trim());
       setShowChangeNameModal(false);
     } catch (err: any) {
-      setError(err.message || "Не удалось сменить имя");
+      setError(api.getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -99,6 +100,7 @@ const Layout: React.FC<Props> = ({ isAuthenticated, onLogout }) => {
 
   return (
     <div className="app">
+      <ErrorToast message={error} onDismiss={() => setError(null)} />
       {!isWorkspace && (
       <nav className="navigation">
         <ul>
@@ -196,7 +198,6 @@ const Layout: React.FC<Props> = ({ isAuthenticated, onLogout }) => {
                 disabled={loading}
                 autoFocus
               />
-              {error && <div className="modal-error">{error}</div>}
             </div>
             <div className="modal-footer">
               <button

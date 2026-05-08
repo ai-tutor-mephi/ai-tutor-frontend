@@ -87,6 +87,17 @@ export type QuizScoreResponse = {
   questions: QuizQuestionScoreResponse[];
 };
 
+export const DEFAULT_BACKEND_ERROR_MESSAGE =
+  "Что-то пошло не так. Попробуйте ещё раз.";
+
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  return DEFAULT_BACKEND_ERROR_MESSAGE;
+}
+
 // ============ TOKEN MANAGEMENT ============
 
 const TOKEN_KEY = "accessToken";
@@ -257,18 +268,30 @@ async function fetchWithAuth(
 // Обработка ответа
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    let errorMessage = response.statusText;
+    let errorMessage = DEFAULT_BACKEND_ERROR_MESSAGE;
+    let errorData: unknown = null;
     
     try {
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
-        const errorData: ErrorResponse = await response.json();
-        errorMessage = errorData.message || errorData.error;
+        errorData = await response.json();
+        const backendMessage = (errorData as Partial<ErrorResponse>)?.message;
+        if (typeof backendMessage === "string" && backendMessage.trim()) {
+          errorMessage = backendMessage;
+        }
       } else {
-        errorMessage = await response.text();
+        await response.text();
       }
     } catch {
-      // Используем statusText если не удалось распарсить
+      // Используем общий текст, если тело ошибки не удалось распарсить.
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      console.error("API error", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorData,
+      });
     }
 
     throw new Error(errorMessage);

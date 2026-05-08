@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as api from "../../services/api";
+import ErrorToast from "../../components/ErrorToast";
 import "./TestPage.css";
 
 type AnswersByQuestion = Record<number, string>;
@@ -29,7 +30,7 @@ const TestPage: React.FC = () => {
       setResult(null);
       setCurrentIndex(0);
     } catch (err: any) {
-      setError(err.message || "Не удалось загрузить тест");
+      setError(api.getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -91,7 +92,7 @@ const TestPage: React.FC = () => {
       const score = await api.scoreQuiz(numericTestId, payload);
       setResult(score);
     } catch (err: any) {
-      setError(err.message || "Не удалось проверить тест");
+      setError(api.getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -107,16 +108,18 @@ const TestPage: React.FC = () => {
   if (loading) {
     return (
       <div className="test-page">
+        <ErrorToast message={error} onDismiss={() => setError(null)} />
         <div className="test-state">Загружаем тест...</div>
       </div>
     );
   }
 
-  if (error && !quiz) {
+  if (!quiz) {
     return (
       <div className="test-page">
+        <ErrorToast message={error} onDismiss={() => setError(null)} />
         <div className="test-state">
-          <p>{error}</p>
+          <p>Не удалось загрузить тест.</p>
           <button type="button" onClick={loadQuiz}>
             Попробовать снова
           </button>
@@ -126,9 +129,10 @@ const TestPage: React.FC = () => {
     );
   }
 
-  if (!quiz || questions.length === 0) {
+  if (questions.length === 0) {
     return (
       <div className="test-page">
+        <ErrorToast message={error} onDismiss={() => setError(null)} />
         <div className="test-state">
           <p>В этом тесте нет вопросов.</p>
           <Link to="/dialogs">К диалогам</Link>
@@ -145,6 +149,7 @@ const TestPage: React.FC = () => {
 
     return (
       <div className="test-page">
+        <ErrorToast message={error} onDismiss={() => setError(null)} />
         <header className="test-header">
           <button type="button" onClick={() => navigate("/dialogs")}>
             К диалогам
@@ -205,14 +210,13 @@ const TestPage: React.FC = () => {
 
   return (
     <div className="test-page">
+      <ErrorToast message={error} onDismiss={() => setError(null)} />
       <header className="test-header">
         <div>
           <p>Тест</p>
           <h1>{quiz.test_name}</h1>
         </div>
       </header>
-
-      {error && <div className="test-error">{error}</div>}
 
       <main className="test-shell">
         <div className="test-progress">

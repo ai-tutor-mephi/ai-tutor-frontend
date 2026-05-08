@@ -259,16 +259,6 @@ footer {
   font-size: var(--text-body);
 }
 
-.modal-error {
-  margin-top: var(--spacing-12);
-  padding: var(--spacing-8) var(--spacing-12);
-  border: 1px solid rgba(179, 0, 0, 0.22);
-  border-radius: var(--radius-inputs);
-  background: rgba(179, 0, 0, 0.06);
-  color: var(--color-error);
-  font-size: var(--text-body-sm);
-}
-
 .modal-footer {
   display: flex;
   justify-content: flex-end;

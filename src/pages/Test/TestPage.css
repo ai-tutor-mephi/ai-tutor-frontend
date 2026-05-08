@@ -73,17 +73,6 @@
   margin: 0;
 }
 
-.test-error {
-  max-width: 960px;
-  margin: 0 auto var(--spacing-12);
-  padding: var(--spacing-8) var(--spacing-12);
-  border: 1px solid rgba(179, 0, 0, 0.24);
-  border-radius: var(--radius-inputs);
-  background: rgba(179, 0, 0, 0.06);
-  color: var(--color-error);
-  font-size: var(--text-body-sm);
-}
-
 .test-shell {
   display: flex;
   max-width: 960px;
@@ -352,12 +341,6 @@
     min-height: calc(100dvh - 40px);
     gap: var(--spacing-8);
     padding: var(--spacing-12);
-  }
-
-  .test-error {
-    margin-bottom: var(--spacing-8);
-    padding: 6px 10px;
-    font-size: 13px;
   }
 
   .test-shell {
