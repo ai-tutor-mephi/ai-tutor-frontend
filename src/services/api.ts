@@ -1,5 +1,8 @@
 // src/services/api.ts
-const BASE = "http://localhost:8080"; // бэкенд
+const BASE = (process.env.REACT_APP_API_URL || "http://localhost:8080").replace(
+  /\/+$/,
+  ""
+);
 
 // ============ TYPES (из swagger.json) ============
 
