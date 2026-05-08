@@ -167,7 +167,7 @@ async function refreshAccessToken(): Promise<string> {
   }
 
   try {
-    const resp = await fetch(`${BASE}/api/auth/refresh`, {
+    const resp = await fetch(`${BASE}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken: refreshTokenValue }),
@@ -282,7 +282,7 @@ export async function register(
   email: string,
   password: string
 ): Promise<string> {
-  const resp = await fetch(`${BASE}/api/auth/register`, {
+  const resp = await fetch(`${BASE}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userName, email, password }),
@@ -294,7 +294,7 @@ export async function login(
   userName: string,
   password: string
 ): Promise<AuthResponse> {
-  const resp = await fetch(`${BASE}/api/auth/login`, {
+  const resp = await fetch(`${BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userName, password }),
@@ -305,7 +305,7 @@ export async function login(
 }
 
 export async function logout(): Promise<string> {
-  const resp = await fetchWithAuth(`${BASE}/api/auth/logout`, {
+  const resp = await fetchWithAuth(`${BASE}/auth/logout`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
   });
@@ -324,7 +324,7 @@ export async function createDialogWithFiles(
     formData.append("files", file);
   });
 
-  const resp = await fetchWithAuth(`${BASE}/api/dialogs/with-files`, {
+  const resp = await fetchWithAuth(`${BASE}/dialogs/with-files`, {
     method: "POST",
     body: formData,
   });
@@ -342,7 +342,7 @@ export async function uploadFilesToDialog(
   });
 
   const resp = await fetchWithAuth(
-    `${BASE}/api/dialogs/${dialogId}/files`,
+    `${BASE}/dialogs/${dialogId}/files`,
     {
       method: "POST",
       body: formData,
@@ -355,7 +355,7 @@ export async function uploadFilesToDialog(
 export async function getDialogFiles(
   dialogId: number
 ): Promise<FileResponse[]> {
-  const resp = await fetchWithAuth(`${BASE}/api/dialogs/${dialogId}/files`, {
+  const resp = await fetchWithAuth(`${BASE}/dialogs/${dialogId}/files`, {
     method: "GET",
   });
   return handleResponse<FileResponse[]>(resp);
@@ -367,7 +367,7 @@ export async function sendMessage(
   question: string
 ): Promise<MessageResponse> {
   const resp = await fetchWithAuth(
-    `${BASE}/api/dialogs/${dialogId}/send-question`,
+    `${BASE}/dialogs/${dialogId}/send-question`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -382,7 +382,7 @@ export async function getDialogMessages(
   dialogId: number
 ): Promise<DialogMessagesResponse> {
   const resp = await fetchWithAuth(
-    `${BASE}/api/dialogs/${dialogId}/messages`,
+    `${BASE}/dialogs/${dialogId}/messages`,
     {
       method: "GET",
     }
@@ -392,7 +392,7 @@ export async function getDialogMessages(
 
 // Получить список всех диалогов пользователя
 export async function getDialogs(): Promise<DialogInfo[]> {
-  const resp = await fetchWithAuth(`${BASE}/api/dialogs`, {
+  const resp = await fetchWithAuth(`${BASE}/dialogs`, {
     method: "GET",
   });
   return handleResponse<DialogInfo[]>(resp);
@@ -400,7 +400,7 @@ export async function getDialogs(): Promise<DialogInfo[]> {
 
 // Удалить диалог
 export async function deleteDialog(dialogId: number): Promise<void> {
-  const resp = await fetchWithAuth(`${BASE}/api/dialogs/${dialogId}`, {
+  const resp = await fetchWithAuth(`${BASE}/dialogs/${dialogId}`, {
     method: "DELETE",
   });
   
@@ -417,7 +417,7 @@ export async function changeDialogTitle(
   title: string
 ): Promise<DialogInfo> {
   const resp = await fetchWithAuth(
-    `${BASE}/api/dialogs/${dialogId}/change-title`,
+    `${BASE}/dialogs/${dialogId}/change-title`,
     {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -437,7 +437,7 @@ export async function generateQuiz(
     dialogId: String(dialogId),
     questionsCount: String(questionsCount),
   });
-  const resp = await fetchWithAuth(`${BASE}/api/quiz?${params.toString()}`, {
+  const resp = await fetchWithAuth(`${BASE}/quiz?${params.toString()}`, {
     method: "POST",
   });
   return handleResponse<QuizResponse>(resp);
@@ -447,7 +447,7 @@ export async function getDialogQuizzes(
   dialogId: number
 ): Promise<QuizResponse[]> {
   const params = new URLSearchParams({ dialogId: String(dialogId) });
-  const resp = await fetchWithAuth(`${BASE}/api/quiz?${params.toString()}`, {
+  const resp = await fetchWithAuth(`${BASE}/quiz?${params.toString()}`, {
     method: "GET",
   });
   return handleResponse<QuizResponse[]>(resp);
@@ -459,7 +459,7 @@ export async function getQuiz(
 ): Promise<QuizResponse> {
   const params = new URLSearchParams({ dialogId: String(dialogId) });
   const resp = await fetchWithAuth(
-    `${BASE}/api/quiz/${quizId}?${params.toString()}`,
+    `${BASE}/quiz/${quizId}?${params.toString()}`,
     {
       method: "GET",
     }
@@ -471,7 +471,7 @@ export async function scoreQuiz(
   quizId: number,
   answers: QuizAnswerRequest[]
 ): Promise<QuizScoreResponse> {
-  const resp = await fetchWithAuth(`${BASE}/api/quiz/${quizId}/score`, {
+  const resp = await fetchWithAuth(`${BASE}/quiz/${quizId}/score`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ answers }),
@@ -485,7 +485,7 @@ export async function scoreQuiz(
 export async function changeUsername(
   userName: string
 ): Promise<ChangeUsernameResponse> {
-  const resp = await fetchWithAuth(`${BASE}/api/user/change-username`, {
+  const resp = await fetchWithAuth(`${BASE}/user/change-username`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userName }),
