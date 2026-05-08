@@ -998,7 +998,10 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
           ) : (
             <div className="no-dialog-selected">
               <h3>Выберите диалог</h3>
-              <p>Откройте существующий диалог или создайте новый.</p>
+              <p>
+                Откройте существующий диалог в левой боковой панели или создайте
+                новый.
+              </p>
               <button
                 type="button"
                 className="primary-btn"
@@ -1022,7 +1025,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 <span>AI Tutor</span>
               </div>
               <button type="button" onClick={() => setLeftMobileOpen(false)}>
-                Закрыть
+                Черный
               </button>
             </div>
             {renderSidebarNavigation()}
@@ -1054,7 +1057,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
             <div className="mobile-drawer-header">
               <h2>Материалы</h2>
               <button type="button" onClick={() => setRightMobileOpen(false)}>
-                Закрыть
+                Черный
               </button>
             </div>
             {renderRightSidebar()}

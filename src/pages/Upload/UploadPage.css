@@ -1101,61 +1101,63 @@ label:has(input:disabled) {
   }
 
   .messages-container {
-    padding: var(--spacing-10, 10px);
+    padding: 8px;
   }
 
   .message {
     max-width: 100%;
-    margin-bottom: var(--spacing-8);
-    padding: var(--spacing-10, 10px);
+    margin-bottom: 7px;
+    padding: 8px;
     border-radius: var(--radius-inputs);
   }
 
   .message-markdown,
   .typing-message {
-    font-size: 15px;
-    line-height: 1.45;
+    font-size: 13px;
+    line-height: 1.4;
   }
 
   .message-header {
-    margin-bottom: var(--spacing-4);
+    margin-bottom: 3px;
+    font-size: 11px;
   }
 
   .chat-empty,
   .no-dialog-selected {
-    padding: var(--spacing-20, 20px);
+    padding: 17px;
   }
 
   .chat-empty h3,
   .no-dialog-selected h3 {
-    font-size: 20px;
+    font-size: 17px;
   }
 
   .chat-empty p,
   .no-dialog-selected p {
-    font-size: 15px;
-    line-height: 1.45;
+    font-size: 13px;
+    line-height: 1.4;
   }
 
   .message-input-wrapper {
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: var(--spacing-8);
-    padding: var(--spacing-8);
+    gap: 7px;
+    padding: 7px;
   }
 
   .message-input-wrapper textarea {
-    min-height: 42px;
-    max-height: 76px;
+    min-height: 36px;
+    max-height: 65px;
     resize: none;
-    padding: var(--spacing-8) var(--spacing-10, 10px);
-    font-size: 15px;
+    padding: 7px 9px;
+    font-size: 13px;
     line-height: 1.35;
   }
 
   .message-input-wrapper button {
-    min-width: 84px;
-    min-height: 42px;
-    padding: var(--spacing-8) var(--spacing-10, 10px);
+    min-width: 72px;
+    min-height: 36px;
+    padding: 7px 9px;
+    font-size: 12px;
   }
 
   .mobile-drawer-overlay {
@@ -1188,6 +1190,36 @@ label:has(input:disabled) {
 
   .mobile-drawer-header .sidebar-brand {
     min-width: 0;
+  }
+
+  .mobile-drawer .sidebar-nav,
+  .mobile-drawer .dialogs-list,
+  .mobile-drawer .context-scroll {
+    font-size: 13px;
+  }
+
+  .mobile-drawer .new-dialog-btn,
+  .mobile-drawer .primary-btn,
+  .mobile-drawer .text-btn,
+  .mobile-drawer .secondary-btn,
+  .mobile-drawer .suggestion-btn,
+  .mobile-drawer .quiz-link,
+  .mobile-drawer .file-picker,
+  .mobile-drawer .dialog-item {
+    font-size: 12px;
+  }
+
+  .mobile-drawer .dialog-item,
+  .mobile-drawer .context-section,
+  .mobile-drawer .file-item,
+  .mobile-drawer .suggestion-btn,
+  .mobile-drawer .quiz-link {
+    padding: 7px;
+  }
+
+  .mobile-drawer .context-scroll,
+  .mobile-drawer .dialogs-list {
+    gap: 6px;
   }
 
   .mobile-drawer .sidebar-nav {
@@ -1238,13 +1270,36 @@ label:has(input:disabled) {
   }
 
   .modal-overlay {
-    padding: var(--spacing-8);
+    padding: 7px;
   }
 
   .modal-content {
-    width: min(100%, calc(100vw - 16px));
-    max-height: calc(100dvh - 16px);
+    width: min(100%, calc(100vw - 14px));
+    max-height: calc(100dvh - 14px);
     overflow: auto;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 14px;
+  }
+
+  .modal-body {
+    gap: 10px;
+  }
+
+  .modal-description,
+  .modal-field,
+  .number-field {
+    font-size: 12px;
+  }
+
+  .modal-input-text,
+  .number-field input {
+    min-height: 36px;
+    padding: 7px 10px;
+    font-size: 13px;
   }
 
   .modal-footer {
@@ -1255,6 +1310,7 @@ label:has(input:disabled) {
   .modal-cancel-btn,
   .modal-submit-btn {
     width: 100%;
-    min-height: 42px;
+    min-height: 36px;
+    font-size: 12px;
   }
 }
