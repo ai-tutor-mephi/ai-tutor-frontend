@@ -1024,8 +1024,14 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 <img src={logo} alt="Логотип AI Tutor" className="sidebar-brand-logo" />
                 <span>AI Tutor</span>
               </div>
-              <button type="button" onClick={() => setLeftMobileOpen(false)}>
-                Черный
+              <button
+                type="button"
+                className="mobile-drawer-close-btn"
+                onClick={() => setLeftMobileOpen(false)}
+                aria-label="Закрыть"
+                title="Закрыть"
+              >
+                ×
               </button>
             </div>
             {renderSidebarNavigation()}
@@ -1056,8 +1062,14 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
           >
             <div className="mobile-drawer-header">
               <h2>Материалы</h2>
-              <button type="button" onClick={() => setRightMobileOpen(false)}>
-                Черный
+              <button
+                type="button"
+                className="mobile-drawer-close-btn"
+                onClick={() => setRightMobileOpen(false)}
+                aria-label="Закрыть"
+                title="Закрыть"
+              >
+                ×
               </button>
             </div>
             {renderRightSidebar()}
