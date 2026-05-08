@@ -215,6 +215,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   };
 
   const handleCreateDialogWithFiles = async () => {
+    if (creatingDialog) return;
+
     if (createFiles.length === 0) {
       setError("Выберите файлы, чтобы создать диалог");
       return;
@@ -233,8 +235,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       setCreateDialogTitle("");
       setShowCreateDialog(false);
       await loadDialogs();
-    } catch (err: any) {
-      setError(err.message || "Не удалось создать диалог");
+    } catch {
+      setError("Не удалось создать диалог. Попробуйте ещё раз.");
     } finally {
       setCreatingDialog(false);
     }
@@ -348,6 +350,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   };
 
   const handleGenerateQuiz = async () => {
+    if (generatingQuiz) return;
+
     if (!currentDialogId) {
       setError("Выберите диалог, чтобы создать тест");
       return;
@@ -365,8 +369,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       await loadQuizzes(currentDialogId);
       setShowGenerateQuiz(false);
       navigate(`/dialogs/${currentDialogId}/tests/${quiz.id}`);
-    } catch (err: any) {
-      setError(err.message || "Не удалось создать тест");
+    } catch {
+      setError("Не удалось создать тест. Попробуйте ещё раз.");
     } finally {
       setGeneratingQuiz(false);
     }
@@ -700,7 +704,6 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                     {currentFiles.map((file) => (
                       <li key={file.fileId} className="file-item">
                         <span>{file.originalFileName}</span>
-                        <small>№ {file.fileId}</small>
                       </li>
                     ))}
                   </ul>
@@ -996,7 +999,12 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       )}
 
       {showCreateDialog && (
-        <div className="modal-overlay" onClick={() => setShowCreateDialog(false)}>
+        <div
+          className="modal-overlay"
+          onClick={() => {
+            if (!creatingDialog) setShowCreateDialog(false);
+          }}
+        >
           <div className="modal-content" onClick={(event) => event.stopPropagation()}>
             <div className="modal-header">
               <h3>Создать диалог</h3>
@@ -1004,6 +1012,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 className="modal-close-btn"
                 type="button"
                 onClick={() => setShowCreateDialog(false)}
+                disabled={creatingDialog}
               >
                 ×
               </button>
@@ -1038,12 +1047,24 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                   accept=".txt,.docx,.pdf"
                 />
               </label>
+              {creatingDialog && (
+                <div className="modal-loading-state" role="status" aria-live="polite">
+                  <span className="loading-dots" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                  <div>
+                    <strong>Создаём диалог...</strong>
+                    <small>Это может занять некоторое время</small>
+                  </div>
+                </div>
+              )}
               {createFiles.length > 0 && (
                 <div className="selected-files-list">
                   {createFiles.map((file) => (
                     <div key={`${file.name}-${file.size}`} className="file-item">
                       <span>{file.name}</span>
-                      <small>{Math.ceil(file.size / 1024)} КБ</small>
                     </div>
                   ))}
                 </div>
@@ -1068,7 +1089,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 onClick={handleCreateDialogWithFiles}
                 disabled={creatingDialog || createFiles.length === 0}
               >
-                {creatingDialog ? "Создаем..." : "Создать"}
+                {creatingDialog ? "Создаём..." : "Создать"}
               </button>
             </div>
           </div>
@@ -1076,7 +1097,12 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       )}
 
       {showGenerateQuiz && (
-        <div className="modal-overlay" onClick={() => setShowGenerateQuiz(false)}>
+        <div
+          className="modal-overlay"
+          onClick={() => {
+            if (!generatingQuiz) setShowGenerateQuiz(false);
+          }}
+        >
           <div className="modal-content" onClick={(event) => event.stopPropagation()}>
             <div className="modal-header">
               <h3>Создать тест</h3>
@@ -1084,6 +1110,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 className="modal-close-btn"
                 type="button"
                 onClick={() => setShowGenerateQuiz(false)}
+                disabled={generatingQuiz}
               >
                 ×
               </button>
@@ -1103,6 +1130,19 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                   disabled={generatingQuiz}
                 />
               </label>
+              {generatingQuiz && (
+                <div className="modal-loading-state" role="status" aria-live="polite">
+                  <span className="loading-dots" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                  <div>
+                    <strong>Создаём тест...</strong>
+                    <small>Это может занять некоторое время</small>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="modal-footer">
               <button
@@ -1121,7 +1161,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                   generatingQuiz || questionsCount < 1 || questionsCount > 20
                 }
               >
-                {generatingQuiz ? "Генерация..." : "Сгенерировать"}
+                {generatingQuiz ? "Создаём..." : "Сгенерировать"}
               </button>
             </div>
           </div>

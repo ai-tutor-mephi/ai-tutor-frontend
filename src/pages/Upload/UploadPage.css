@@ -180,6 +180,11 @@
   background: var(--color-parchment);
 }
 
+.modal-close-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .new-dialog-btn,
 .primary-btn,
 .modal-submit-btn {
@@ -872,6 +877,71 @@ label:has(input:disabled) {
   color: var(--color-dusk-gray);
   font-size: var(--text-caption);
   line-height: var(--leading-caption);
+}
+
+.modal-loading-state {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-inputs);
+  background: var(--color-parchment);
+}
+
+.modal-loading-state strong,
+.modal-loading-state small {
+  display: block;
+}
+
+.modal-loading-state strong {
+  color: var(--color-inkwell);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-body-sm);
+}
+
+.modal-loading-state small {
+  margin-top: var(--spacing-4);
+  color: var(--color-dusk-gray);
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+}
+
+.loading-dots {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+}
+
+.loading-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  animation: loadingDotPulse 1.2s ease-in-out infinite;
+  background: var(--color-faded-stone);
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes loadingDotPulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
 }
 
 .modal-footer {
