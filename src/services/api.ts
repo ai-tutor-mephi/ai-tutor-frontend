@@ -91,9 +91,16 @@ export type QuizScoreResponse = {
 
 const TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
+export const AUTH_STATE_CHANGED_EVENT = "auth-state-changed";
 
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
+
+function notifyAuthStateChanged() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT));
+  }
+}
 
 // Получить access token из localStorage
 export function getAccessToken(): string | null {
@@ -109,12 +116,14 @@ function getRefreshToken(): string | null {
 export function saveTokens(accessToken: string, refreshToken: string) {
   localStorage.setItem(TOKEN_KEY, accessToken);
   localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+  notifyAuthStateChanged();
 }
 
 // Удалить токены из localStorage
 export function clearTokens() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
+  notifyAuthStateChanged();
 }
 
 // Проверить, авторизован ли пользователь

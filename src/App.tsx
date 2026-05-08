@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout/Layout";
 import NotFound from "./pages/NotFound/NotFound";
@@ -16,22 +16,42 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const checkAuth = () => {
+  const checkAuth = useCallback(() => {
     const authenticated = api.isAuthenticated();
     setIsAuthenticated(authenticated);
     setLoading(false);
-  };
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    api.clearTokens();
+    setIsAuthenticated(false);
+  }, []);
 
   useEffect(() => {
     checkAuth();
-  }, []);
+    window.addEventListener(api.AUTH_STATE_CHANGED_EVENT, checkAuth);
+    window.addEventListener("storage", checkAuth);
+
+    return () => {
+      window.removeEventListener(api.AUTH_STATE_CHANGED_EVENT, checkAuth);
+      window.removeEventListener("storage", checkAuth);
+    };
+  }, [checkAuth]);
 
   if (loading) return <LoadingPage />;
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route
+          path="/"
+          element={
+            <Layout
+              isAuthenticated={isAuthenticated}
+              onLogout={handleLogout}
+            />
+          }
+        >
           <Route index element={<Home isAuthenticated={isAuthenticated} />} />
           <Route path="/about" element={<About />} />
           <Route path="/auth" element={<AuthPage onAuthSuccess={checkAuth} />} />
@@ -40,7 +60,7 @@ function App() {
             path="/upload"
             element={
               <PrivateRoute isAuthenticated={isAuthenticated}>
-                <Upload onLogout={() => setIsAuthenticated(false)} />
+                <Upload onLogout={handleLogout} />
               </PrivateRoute>
             }
           />
@@ -48,7 +68,7 @@ function App() {
             path="/dialogs"
             element={
               <PrivateRoute isAuthenticated={isAuthenticated}>
-                <Upload onLogout={() => setIsAuthenticated(false)} />
+                <Upload onLogout={handleLogout} />
               </PrivateRoute>
             }
           />

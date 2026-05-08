@@ -4,10 +4,15 @@ import * as api from "../../services/api";
 import logo from "../../assets/AI_Tutor_LOGO.PNG";
 import "./Layout.css";
 
-const Layout: React.FC = () => {
-  const [userName, setUserName] = useState<string | null>(() =>
-    api.isAuthenticated() ? api.getUserNameFromToken() : null
-  );
+type Props = {
+  isAuthenticated: boolean;
+  onLogout: () => void;
+};
+
+const Layout: React.FC<Props> = ({ isAuthenticated, onLogout }) => {
+  const [userName, setUserName] = useState<string | null>(() => {
+    return isAuthenticated ? api.getUserNameFromToken() : null;
+  });
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showChangeNameModal, setShowChangeNameModal] = useState(false);
   const [newUserName, setNewUserName] = useState("");
@@ -20,13 +25,14 @@ const Layout: React.FC = () => {
     location.pathname.startsWith("/dialogs") || location.pathname.startsWith("/upload");
 
   useEffect(() => {
-    if (api.isAuthenticated()) {
-      const name = api.getUserNameFromToken();
-      if (name !== userName) {
-        setUserName(name);
-      }
+    if (!isAuthenticated) {
+      setUserName(null);
+      setShowProfileMenu(false);
+      return;
     }
-  }, [location.pathname, userName]);
+
+    setUserName(api.getUserNameFromToken());
+  }, [isAuthenticated, location.pathname]);
 
   useEffect(() => {
     const handleClick = () => setShowProfileMenu(false);
@@ -60,6 +66,7 @@ const Layout: React.FC = () => {
     } catch {
       api.clearTokens();
     }
+    onLogout();
     setUserName(null);
     navigate("/auth");
   };
@@ -108,12 +115,12 @@ const Layout: React.FC = () => {
             <li>
               <Link to="/about">О проекте</Link>
             </li>
-            {userName && (
+            {isAuthenticated && userName && (
               <li>
                 <Link to="/dialogs">Диалоги</Link>
               </li>
             )}
-            {userName && (
+            {isAuthenticated && userName && (
               <li className="user-profile">
                 <div className="profile-link" onClick={handleProfileClick}>
                   <div className="avatar-circle">{getInitial(userName)}</div>
