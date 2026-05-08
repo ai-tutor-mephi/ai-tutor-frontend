@@ -395,6 +395,10 @@ label:has(input:disabled) {
   display: none;
 }
 
+.mobile-dialogs-topbar {
+  display: none;
+}
+
 .messages-container {
   flex: 1;
   padding: var(--spacing-16);
@@ -1010,17 +1014,20 @@ label:has(input:disabled) {
   display: none;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 767px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   .dialogs-page {
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .mobile-chat-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-8);
+    display: none;
   }
 
   .mobile-panel-btn {
@@ -1029,9 +1036,52 @@ label:has(input:disabled) {
     justify-content: center;
   }
 
+  .mobile-dialogs-topbar {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    align-items: center;
+    min-height: 48px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-paper-white);
+  }
+
+  .mobile-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius-buttons);
+    background: transparent;
+    color: var(--color-graphite);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .mobile-icon-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .mobile-dialog-title {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--color-inkwell);
+    font-size: var(--text-body-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-body-sm);
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .dialogs-layout {
     display: block;
-    padding: var(--spacing-8);
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
   }
 
   .dialogs-layout > .dialogs-sidebar,
@@ -1040,9 +1090,72 @@ label:has(input:disabled) {
   }
 
   .chat-area {
-    min-height: calc(100vh - 16px);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-cards);
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .chat-header {
+    display: none;
+  }
+
+  .messages-container {
+    padding: var(--spacing-10, 10px);
+  }
+
+  .message {
+    max-width: 100%;
+    margin-bottom: var(--spacing-8);
+    padding: var(--spacing-10, 10px);
+    border-radius: var(--radius-inputs);
+  }
+
+  .message-markdown,
+  .typing-message {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .message-header {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .chat-empty,
+  .no-dialog-selected {
+    padding: var(--spacing-20, 20px);
+  }
+
+  .chat-empty h3,
+  .no-dialog-selected h3 {
+    font-size: 20px;
+  }
+
+  .chat-empty p,
+  .no-dialog-selected p {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .message-input-wrapper {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--spacing-8);
+    padding: var(--spacing-8);
+  }
+
+  .message-input-wrapper textarea {
+    min-height: 42px;
+    max-height: 76px;
+    resize: none;
+    padding: var(--spacing-8) var(--spacing-10, 10px);
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  .message-input-wrapper button {
+    min-width: 84px;
+    min-height: 42px;
+    padding: var(--spacing-8) var(--spacing-10, 10px);
   }
 
   .mobile-drawer-overlay {
@@ -1051,13 +1164,16 @@ label:has(input:disabled) {
 
   .mobile-drawer {
     display: flex;
-    width: min(92vw, 380px);
+    width: min(86vw, 340px);
+    max-width: 100vw;
     min-height: 0;
     flex-direction: column;
+    overflow: hidden;
     background: var(--color-paper-white);
   }
 
   .mobile-drawer.right {
+    width: min(90vw, 380px);
     margin-left: auto;
   }
 
@@ -1068,6 +1184,10 @@ label:has(input:disabled) {
     gap: var(--spacing-8);
     padding: var(--spacing-12);
     border-bottom: 1px solid var(--color-border);
+  }
+
+  .mobile-drawer-header .sidebar-brand {
+    min-width: 0;
   }
 
   .mobile-drawer .sidebar-nav {
@@ -1081,25 +1201,60 @@ label:has(input:disabled) {
     background: transparent;
   }
 
+  .mobile-drawer .new-dialog-btn {
+    flex: 0 0 auto;
+  }
+
+  .mobile-drawer .dialogs-list {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .mobile-account-block {
+    flex: 0 0 auto;
+  }
+
   .mobile-drawer .context-sidebar {
     display: flex;
     width: auto;
     flex: 1;
+    min-height: 0;
     border: 0;
     border-radius: 0;
   }
-}
 
-@media (max-width: 640px) {
-  .message {
-    max-width: 100%;
+  .mobile-drawer .context-header,
+  .mobile-drawer .right-sidebar-resize-handle {
+    display: none;
   }
 
-  .message-input-wrapper {
-    grid-template-columns: 1fr;
+  .mobile-drawer .context-scroll {
+    overflow-y: auto;
   }
 
-  .message-input-wrapper button {
+  .sidebar-resize-handle,
+  .right-sidebar-resize-handle {
+    display: none;
+  }
+
+  .modal-overlay {
+    padding: var(--spacing-8);
+  }
+
+  .modal-content {
+    width: min(100%, calc(100vw - 16px));
+    max-height: calc(100dvh - 16px);
+    overflow: auto;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .modal-cancel-btn,
+  .modal-submit-btn {
+    width: 100%;
     min-height: 42px;
   }
 }

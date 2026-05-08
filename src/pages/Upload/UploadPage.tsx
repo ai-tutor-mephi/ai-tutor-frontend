@@ -133,6 +133,20 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     });
   }, [messages, loadingMessages, currentDialogId]);
 
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLeftMobileOpen(false);
+        setRightMobileOpen(false);
+      }
+    };
+
+    if (leftMobileOpen || rightMobileOpen) {
+      window.addEventListener("keydown", handleEscape);
+      return () => window.removeEventListener("keydown", handleEscape);
+    }
+  }, [leftMobileOpen, rightMobileOpen]);
+
   const loadDialogs = async () => {
     setLoadingDialogs(true);
     try {
@@ -526,9 +540,13 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     setRightMobileOpen(false);
   };
 
-  const openLeftMobilePanel = () => setLeftMobileOpen(true);
+  const openLeftMobilePanel = () => {
+    setRightMobileOpen(false);
+    setLeftMobileOpen(true);
+  };
 
   const openRightMobilePanel = () => {
+    setLeftMobileOpen(false);
     setRightCollapsed(false);
     setRightMobileOpen(true);
   };
@@ -556,6 +574,33 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
         disabled={!currentDialogId}
       >
         Материалы
+      </button>
+    </div>
+  );
+
+  const renderMobileTopBar = () => (
+    <div className="mobile-dialogs-topbar">
+      <button
+        type="button"
+        className="mobile-icon-btn"
+        onClick={openLeftMobilePanel}
+        aria-label="Диалоги"
+        title="Диалоги"
+      >
+        ☰
+      </button>
+      <div className="mobile-dialog-title">
+        {selectedDialog?.title || "Выберите диалог"}
+      </div>
+      <button
+        type="button"
+        className="mobile-icon-btn"
+        onClick={openRightMobilePanel}
+        disabled={!currentDialogId}
+        aria-label="Материалы"
+        title="Материалы"
+      >
+        ◧
       </button>
     </div>
   );
@@ -803,6 +848,21 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     </aside>
   );
 
+  const renderMobileAccountBlock = () => (
+    <div className="account-block mobile-account-block">
+      <div className="avatar-circle">{userName?.charAt(0).toUpperCase() || "?"}</div>
+      <div className="account-copy">
+        <strong>{userName || "Пользователь"}</strong>
+        <Link to="/dialogs" onClick={() => setLeftMobileOpen(false)}>
+          Аккаунт позже
+        </Link>
+      </div>
+      <button type="button" className="text-btn" onClick={handleLogout}>
+        Выйти
+      </button>
+    </div>
+  );
+
   return (
     <div className="dialogs-page">
       {error && <div className="error-message">{error}</div>}
@@ -818,6 +878,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
         {renderLeftSidebar()}
 
         <main className="chat-area" aria-label="Чат">
+          {renderMobileTopBar()}
           {currentDialogId ? (
             <>
               <div className="chat-header">
@@ -936,12 +997,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
             </>
           ) : (
             <div className="no-dialog-selected">
-              {renderMobilePanelButtons()}
               <h3>Выберите диалог</h3>
-              <p>
-                Создайте новый диалог с файлами, чтобы тьютор понимал контекст,
-                и начните задавать вопросы.
-              </p>
+              <p>Откройте существующий диалог или создайте новый.</p>
               <button
                 type="button"
                 className="primary-btn"
@@ -960,20 +1017,27 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
         <div className="mobile-drawer-overlay" onClick={() => setLeftMobileOpen(false)}>
           <div className="mobile-drawer left" onClick={(event) => event.stopPropagation()}>
             <div className="mobile-drawer-header">
-              <h2>Диалоги</h2>
+              <div className="sidebar-brand">
+                <img src={logo} alt="Логотип AI Tutor" className="sidebar-brand-logo" />
+                <span>AI Tutor</span>
+              </div>
               <button type="button" onClick={() => setLeftMobileOpen(false)}>
                 Закрыть
               </button>
             </div>
+            {renderSidebarNavigation()}
             <button
               type="button"
               className="new-dialog-btn"
-              onClick={() => setShowCreateDialog(true)}
+              onClick={() => {
+                setLeftMobileOpen(false);
+                setShowCreateDialog(true);
+              }}
             >
               Новый диалог
             </button>
-            {renderSidebarNavigation()}
             {renderDialogList()}
+            {renderMobileAccountBlock()}
           </div>
         </div>
       )}
