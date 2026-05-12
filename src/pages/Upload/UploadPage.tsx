@@ -741,7 +741,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
                 onClick={handleLogout}
                 role="menuitem"
               >
-                Выйти
+                Выйти из аккаунта
               </button>
             </>
           ) : (
