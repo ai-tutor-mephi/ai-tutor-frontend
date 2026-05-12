@@ -305,16 +305,35 @@ label:has(input:disabled) {
 }
 
 .account-block {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--spacing-8);
+  position: relative;
   padding: var(--spacing-12);
   border-top: 1px solid var(--color-border);
 }
 
+.account-trigger {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-6);
+  border: 0;
+  border-radius: var(--radius-navigation);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.account-trigger:hover,
+.account-trigger:focus-visible {
+  background: var(--color-parchment);
+  outline: none;
+}
+
 .avatar-circle {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   width: 32px;
@@ -330,24 +349,83 @@ label:has(input:disabled) {
   min-width: 0;
 }
 
-.account-copy strong,
-.account-copy a {
+.account-copy strong {
   display: block;
   overflow: hidden;
+  color: var(--color-inkwell);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.account-copy strong {
-  color: var(--color-inkwell);
-  font-size: var(--text-body-sm);
-  font-weight: var(--font-weight-medium);
+.account-menu {
+  position: absolute;
+  right: var(--spacing-12);
+  bottom: calc(100% - var(--spacing-6));
+  left: var(--spacing-12);
+  z-index: 30;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-inputs);
+  background: var(--color-paper-white);
 }
 
-.account-copy a {
-  color: var(--color-dusk-gray);
+.account-menu-item {
+  min-height: 30px;
+}
+
+.account-name-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8);
+}
+
+.account-name-form label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  color: var(--color-graphite);
   font-size: var(--text-caption);
-  text-decoration: none;
+  line-height: var(--leading-caption);
+}
+
+.account-name-form input {
+  width: 100%;
+  min-height: 34px;
+  padding: var(--spacing-6) var(--spacing-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-inputs);
+  background: var(--color-parchment);
+  color: var(--color-inkwell);
+  font-size: var(--text-body-sm);
+}
+
+.account-menu-actions {
+  display: flex;
+  gap: var(--spacing-6);
+}
+
+.account-menu-actions button {
+  flex: 1;
+  min-height: 30px;
+  padding: var(--spacing-4) var(--spacing-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-buttons);
+  background: transparent;
+  color: var(--color-graphite);
+  cursor: pointer;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+}
+
+.account-menu-actions button:hover:not(:disabled) {
+  background: var(--color-parchment);
 }
 
 .sidebar-resize-handle {
