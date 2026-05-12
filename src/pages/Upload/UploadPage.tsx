@@ -92,8 +92,16 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [renameDialogId, setRenameDialogId] = useState<number | null>(null);
   const [newDialogTitle, setNewDialogTitle] = useState("");
+  const [accountName, setAccountName] = useState(
+    () => api.getUserNameFromToken() || ""
+  );
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [accountEditing, setAccountEditing] = useState(false);
+  const [newAccountName, setNewAccountName] = useState("");
+  const [savingAccountName, setSavingAccountName] = useState(false);
 
-  const userName = api.getUserNameFromToken();
+  const displayUserName = accountName || "Пользователь";
+  const accountInitial = displayUserName.charAt(0).toUpperCase();
   const selectedDialog = useMemo(
     () => dialogs.find((dialog) => dialog.dialogId === currentDialogId) || null,
     [dialogs, currentDialogId]
@@ -147,6 +155,36 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
       return () => window.removeEventListener("keydown", handleEscape);
     }
   }, [leftMobileOpen, rightMobileOpen]);
+
+  useEffect(() => {
+    const syncAccountName = () => {
+      setAccountName(api.getUserNameFromToken() || "");
+    };
+
+    window.addEventListener(api.AUTH_STATE_CHANGED_EVENT, syncAccountName);
+    return () =>
+      window.removeEventListener(api.AUTH_STATE_CHANGED_EVENT, syncAccountName);
+  }, []);
+
+  useEffect(() => {
+    if (!accountMenuOpen) return;
+
+    const closeMenu = () => {
+      setAccountMenuOpen(false);
+      setAccountEditing(false);
+      setNewAccountName("");
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeMenu();
+    };
+
+    window.addEventListener("click", closeMenu);
+    window.addEventListener("keydown", handleEscape);
+    return () => {
+      window.removeEventListener("click", closeMenu);
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [accountMenuOpen]);
 
   const loadDialogs = async () => {
     setLoadingDialogs(true);
@@ -413,6 +451,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
   };
 
   const handleLogout = async () => {
+    setAccountMenuOpen(false);
+    setAccountEditing(false);
     try {
       await api.logout();
     } catch {
@@ -420,6 +460,35 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     }
     onLogout();
     navigate("/auth");
+  };
+
+  const handleStartAccountRename = () => {
+    setNewAccountName(accountName);
+    setAccountEditing(true);
+  };
+
+  const handleSubmitAccountRename = async () => {
+    const nextName = newAccountName.trim();
+    if (nextName.length < 3) {
+      setError("Имя должно быть длиной от 3 символов");
+      return;
+    }
+
+    setSavingAccountName(true);
+    setError(null);
+
+    try {
+      const response = await api.changeUsername(nextName);
+      await api.refreshTokens();
+      setAccountName(response.userName || nextName);
+      setAccountMenuOpen(false);
+      setAccountEditing(false);
+      setNewAccountName("");
+    } catch (err: any) {
+      setError(api.getErrorMessage(err));
+    } finally {
+      setSavingAccountName(false);
+    }
   };
 
   const handleContextMenu = (event: React.MouseEvent, dialogId: number) => {
@@ -632,6 +701,89 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     </div>
   );
 
+  const renderAccountBlock = (extraClassName = "") => (
+    <div
+      className={`account-block ${extraClassName}`}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <button
+        type="button"
+        className="account-trigger"
+        onClick={() => {
+          setAccountMenuOpen((value) => !value);
+          setAccountEditing(false);
+          setNewAccountName("");
+        }}
+        aria-haspopup="menu"
+        aria-expanded={accountMenuOpen}
+      >
+        <span className="avatar-circle">{accountInitial}</span>
+        <span className="account-copy">
+          <strong>{displayUserName}</strong>
+        </span>
+      </button>
+
+      {accountMenuOpen && (
+        <div className="account-menu" role="menu">
+          {!accountEditing ? (
+            <>
+              <button
+                type="button"
+                className="context-menu-item account-menu-item"
+                onClick={handleStartAccountRename}
+                role="menuitem"
+              >
+                Изменить имя
+              </button>
+              <button
+                type="button"
+                className="context-menu-item account-menu-item delete"
+                onClick={handleLogout}
+                role="menuitem"
+              >
+                Выйти
+              </button>
+            </>
+          ) : (
+            <div className="account-name-form">
+              <label>
+                <span>Новое имя</span>
+                <input
+                  type="text"
+                  value={newAccountName}
+                  onChange={(event) => setNewAccountName(event.target.value)}
+                  minLength={3}
+                  maxLength={50}
+                  disabled={savingAccountName}
+                  autoFocus
+                />
+              </label>
+              <div className="account-menu-actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAccountEditing(false);
+                    setNewAccountName("");
+                  }}
+                  disabled={savingAccountName}
+                >
+                  Отмена
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitAccountRename}
+                  disabled={savingAccountName || newAccountName.trim().length < 3}
+                >
+                  {savingAccountName ? "Сохраняем..." : "Сохранить"}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   const renderLeftSidebar = () => (
     <aside
       className={`dialogs-sidebar ${leftCollapsed ? "collapsed" : ""}`}
@@ -666,16 +818,7 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
           </button>
           <div className="sidebar-section-label">Диалоги</div>
           {renderDialogList()}
-          <div className="account-block">
-            <div className="avatar-circle">{userName?.charAt(0).toUpperCase() || "?"}</div>
-            <div className="account-copy">
-              <strong>{userName || "Пользователь"}</strong>
-              <Link to="/dialogs">Аккаунт позже</Link>
-            </div>
-            <button type="button" className="text-btn" onClick={handleLogout}>
-              Выйти
-            </button>
-          </div>
+          {renderAccountBlock()}
           <div
             className="sidebar-resize-handle"
             onMouseDown={startResize}
@@ -850,20 +993,8 @@ export const UploadPage: React.FC<Props> = ({ onLogout }) => {
     </aside>
   );
 
-  const renderMobileAccountBlock = () => (
-    <div className="account-block mobile-account-block">
-      <div className="avatar-circle">{userName?.charAt(0).toUpperCase() || "?"}</div>
-      <div className="account-copy">
-        <strong>{userName || "Пользователь"}</strong>
-        <Link to="/dialogs" onClick={() => setLeftMobileOpen(false)}>
-          Аккаунт позже
-        </Link>
-      </div>
-      <button type="button" className="text-btn" onClick={handleLogout}>
-        Выйти
-      </button>
-    </div>
-  );
+  const renderMobileAccountBlock = () =>
+    renderAccountBlock("mobile-account-block");
 
   return (
     <div className="dialogs-page">
